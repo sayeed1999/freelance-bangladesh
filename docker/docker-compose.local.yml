@@ -29,10 +29,12 @@ services:
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - 9990:8080
+    volumes:
+      - ./keycloak/:/opt/keycloak/data/import
     restart: unless-stopped
     depends_on:
       - postgres
-    command: start-dev
+    command: -v start-dev --import-realm
     networks:
       - common_network
 
