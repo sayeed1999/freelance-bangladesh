@@ -1,5 +1,13 @@
 {
     "Dashboard": {
         "Title": "Freelance Bangladesh"
+    },
+    "Keycloak": {
+        "BaseUrl": "",
+        "Realm": "",
+        "RestApi": {
+            "ClientId": "",
+            "ClientSecret": ""
+        }
     }
 }
