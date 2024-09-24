@@ -15,6 +15,7 @@ type RegisterRequest struct {
 	LastName     string `validate:"min=1,max=30"`
 	Email        string `validate:"required,email"`
 	MobileNumber string
+	Role         string
 }
 
 type RegisterResponse struct {
@@ -52,7 +53,7 @@ func (uc *registerUseCase) Register(ctx context.Context, request RegisterRequest
 		(*user.Attributes)["mobile"] = []string{request.MobileNumber}
 	}
 
-	userResponse, err := uc.identityManager.CreateUser(ctx, user, request.Password, "admin")
+	userResponse, err := uc.identityManager.CreateUser(ctx, user, request.Password, request.Role)
 	if err != nil {
 		return nil, err
 	}
