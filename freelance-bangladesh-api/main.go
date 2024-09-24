@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/sayeed1999/freelance-bangladesh/api/handlers/middlewares"
+	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/api/routes"
 	"github.com/sayeed1999/freelance-bangladesh/config"
 	"github.com/spf13/viper"
