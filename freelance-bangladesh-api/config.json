@@ -1,12 +1,14 @@
 {
+    "ListenIP": "127.0.0.1",
+    "ListenPort": "8080",
     "Dashboard": {
         "Title": "Freelance Bangladesh"
     },
     "Keycloak": {
-        "BaseUrl": "",
-        "Realm": "",
+        "BaseUrl": "http://localhost:9990",
+        "Realm": "freelance-bangladesh",
         "RestApi": {
-            "ClientId": "",
+            "ClientId": "backend-api",
             "ClientSecret": ""
         }
     }
