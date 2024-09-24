@@ -5,10 +5,10 @@
         "Title": "Freelance Bangladesh"
     },
     "Keycloak": {
-        "BaseUrl": "http://localhost:9990",
-        "Realm": "freelance-bangladesh",
+        "BaseUrl": "",
+        "Realm": "",
         "RestApi": {
-            "ClientId": "backend-api",
+            "ClientId": "",
             "ClientSecret": ""
         }
     }
