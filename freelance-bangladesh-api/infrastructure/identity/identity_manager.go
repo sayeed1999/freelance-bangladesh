@@ -3,7 +3,6 @@ package identity
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/pkg/errors"
@@ -45,21 +44,6 @@ func (im *identityManager) CreateUser(ctx context.Context, user gocloak.User, pa
 
 	client := gocloak.NewClient(im.baseUrl)
 
-	// force role = 'talent' if user doesn't specify role!
-	if role == "" {
-		role = "talent"
-	}
-
-	var roleNameLowerCase = strings.ToLower(role)
-	switch roleNameLowerCase {
-	// case "admin": # not allowed
-	case "client":
-	case "talent":
-		break
-	default:
-		return nil, errors.Wrap(err, "unable to create user other than client or talent")
-	}
-
 	userId, err := client.CreateUser(ctx, token.AccessToken, im.realm, user)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create the user")
@@ -70,9 +54,9 @@ func (im *identityManager) CreateUser(ctx context.Context, user gocloak.User, pa
 		return nil, errors.Wrap(err, "unable to set the password for the user")
 	}
 
-	roleKeycloak, err := client.GetRealmRole(ctx, token.AccessToken, im.realm, roleNameLowerCase)
+	roleKeycloak, err := client.GetRealmRole(ctx, token.AccessToken, im.realm, role)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("unable to get role by name: '%v'", roleNameLowerCase))
+		return nil, errors.Wrap(err, fmt.Sprintf("unable to get role by name: '%v'", role))
 	}
 	err = client.AddRealmRoleToUser(ctx, token.AccessToken, im.realm, userId, []gocloak.Role{
 		*roleKeycloak,
