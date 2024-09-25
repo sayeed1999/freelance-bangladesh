@@ -28,12 +28,10 @@ type Dashboard struct {
 type Keycloak struct {
 	BaseUrl string
 	Realm   string
-	RestApi *RestApi
-}
-
-type RestApi struct {
-	ClientId     string
-	ClientSecret string
+	RestApi struct {
+		ClientId     string
+		ClientSecret string
+	}
 }
 
 type Postgres struct {
