@@ -4,29 +4,26 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gofiber/fiber/v3"
-	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
+	"github.com/gin-gonic/gin"
 	"github.com/sayeed1999/freelance-bangladesh/api/routes"
 	"github.com/sayeed1999/freelance-bangladesh/config"
-	"github.com/spf13/viper"
 )
 
 func main() {
-	config.LoadConfig()
-	appTitle := viper.GetString("Dashboard.Title")
+	cfg, err := config.Read()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-	app := fiber.New(fiber.Config{
-		AppName:      appTitle,
-		ServerHeader: "Fiber",
-	})
+	// Initialize Gin engine
+	app := gin.Default()
 
-	middlewares.InitFiberMiddlewares(app, routes.InitPublicRoutes, routes.InitProtectedRoutes)
+	// Initialize routes
+	routes.InitRoutes(app)
 
-	var listenIp = viper.GetString("ListenIP")
-	var listenPort = viper.GetString("ListenPort")
+	addr := fmt.Sprintf("%v:%v", cfg.ListenIP, cfg.ListenPort)
+	log.Printf("%v api will listen on %v", cfg.Dashboard.Title, addr)
 
-	log.Printf("api will listen on %v:%v", listenIp, listenPort)
-
-	err := app.Listen(fmt.Sprintf("%v:%v", listenIp, listenPort))
+	err = app.Run(addr)
 	log.Fatal(err)
 }

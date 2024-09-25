@@ -12,7 +12,7 @@ func NewGetJobsUseCase() *getJobsUseCase {
 	return &getJobsUseCase{}
 }
 
-func (uc *getJobsUseCase) GetJobs(ctx context.Context) []entities.Job {
+func (uc *getJobsUseCase) GetJobs(ctx context.Context) ([]entities.Job, error) {
 	all := []entities.Job{}
-	return all
+	return all, nil
 }

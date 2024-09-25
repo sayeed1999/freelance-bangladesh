@@ -3,46 +3,54 @@ package handlers
 import (
 	"context"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
 	jobsuc "github.com/sayeed1999/freelance-bangladesh/use_cases/jobs_uc"
 )
 
+// CreateJobUseCase interface for creating a job
 type CreateJobUseCase interface {
 	CreateJob(ctx context.Context, request jobsuc.CreateJobRequest) (*jobsuc.CreateJobResponse, error)
 }
 
+// GetJobsUseCase interface for getting jobs
 type GetJobsUseCase interface {
-	GetJobs(ctx context.Context) []entities.Job
+	GetJobs(ctx context.Context) ([]entities.Job, error) // Updated to return an error
 }
 
-func CreateJobHandler(useCase CreateJobUseCase) fiber.Handler {
-	return func(c fiber.Ctx) error {
-		var ctx = c.UserContext()
+// CreateJobHandler handles the creation of a job
+func CreateJobHandler(useCase CreateJobUseCase) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var request jobsuc.CreateJobRequest
 
-		var request = jobsuc.CreateJobRequest{}
-
-		err := c.Bind().Body(&request)
-		if err != nil {
-			return errors.Wrap(err, "unable to parse incoming request")
+		// Bind the incoming JSON to the request struct
+		if err := c.ShouldBindJSON(&request); err != nil {
+			c.JSON(400, gin.H{"error": errors.Wrap(err, "unable to parse incoming request").Error()})
+			return
 		}
 
-		response, err := useCase.CreateJob(ctx, request)
+		// Create job using the use case
+		response, err := useCase.CreateJob(c.Request.Context(), request)
 		if err != nil {
-			return err
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
 		}
 
-		return c.Status(fiber.StatusCreated).JSON(response)
+		// Respond with the created job
+		c.JSON(201, response)
 	}
 }
 
-func GetJobsHandler(useCase GetJobsUseCase) fiber.Handler {
-	return func(c fiber.Ctx) error {
+// GetJobsHandler handles retrieving jobs
+func GetJobsHandler(useCase GetJobsUseCase) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		Jobs, err := useCase.GetJobs(c.Request.Context()) // Capture potential error
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
 
-		var ctx = c.UserContext()
-
-		Jobs := useCase.GetJobs(ctx)
-		return c.Status(fiber.StatusOK).JSON(Jobs)
+		c.JSON(200, Jobs)
 	}
 }
