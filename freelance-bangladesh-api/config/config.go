@@ -46,9 +46,6 @@ func Read() (*Config, error) {
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
-	// Configuration file
-	viper.SetConfigType("yml")
-
 	// Read configuration
 	if err := viper.ReadConfig(bytes.NewBuffer(defaultConfiguration)); err != nil {
 		return nil, err
