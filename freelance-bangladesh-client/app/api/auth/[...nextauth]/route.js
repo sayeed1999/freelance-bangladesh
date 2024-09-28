@@ -40,9 +40,6 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, account }) {
       const nowTimeStamp = Math.floor(Date.now() / 1000);
-      console.log({
-        token, account
-      });
 
       if (account) {
         // account is only available the first time this callback is called on a new session (after the user signs in)

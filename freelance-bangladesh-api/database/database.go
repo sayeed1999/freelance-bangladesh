@@ -39,10 +39,14 @@ func Connect() {
 		os.Exit(2)
 	}
 
-	log.Println("Connected")
+	log.Println("Connected to database")
 	db.Logger = logger.Default.LogMode(logger.Info)
-	log.Println("running migrations")
-	db.AutoMigrate(&entities.Job{})
+	log.Println("running migrations on database")
+
+	err = db.AutoMigrate(&entities.Job{})
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	DB = DBInstance{
 		Db: db,

@@ -31,12 +31,12 @@ func InitRoutes(app *gin.Engine) {
 		{
 			jobs.POST(
 				"",
-				middlewares.Authorize(string(enums.ROLE_ADMIN), string(enums.ROLE_TALENT)),
+				middlewares.Authorize(string(enums.ROLE_ADMIN), string(enums.ROLE_CLIENT)),
 				handlers.CreateJobHandler(createJobUseCase),
 			)
 			jobs.GET(
 				"",
-				middlewares.Authorize(string(enums.ROLE_ADMIN), string(enums.ROLE_CLIENT)),
+				middlewares.Authorize(string(enums.ROLE_ADMIN), string(enums.ROLE_TALENT)),
 				handlers.GetJobsHandler(getJobsUseCase),
 			)
 		}
