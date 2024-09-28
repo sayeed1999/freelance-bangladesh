@@ -2,15 +2,15 @@
 
 To run the docker containers locally, follow these steps:
 
-- Open up a terminal from ./docker directory
+- Open up a terminal from project root directory
 
 - Allow permission to execute the .sh script files by running
 
 ```bash
 chmod +x ./setenv.sh
-chmod +x ./init.sql
-chmod +x ./start-docker.local.sh
-chmod +x ./stop-docker.local.sh
+chmod +x ./docker/init.sql
+chmod +x ./docker/start-docker.local.sh
+chmod +x ./docker/stop-docker.local.sh
 ```
 
 - Run the script for setting up envs
@@ -20,6 +20,8 @@ chmod +x ./stop-docker.local.sh
 ```bash
 . ./setenv.sh
 ```
+
+- Navigate to ./docker dir using `cd docker`
 
 - Then run the start script by running
 
