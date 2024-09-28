@@ -1,16 +1,32 @@
 services:
-  postgres:
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    ports:
+      - 5434:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    restart: unless-stopped
+    networks:
+      - postgres_network
+  
+  postgres-db:
     image: postgres:16.4
-    container_name: postgres
+    container_name: postgres-db
     environment:
       POSTGRES_DB: ${API_DATABASE_NAME}
       POSTGRES_USER: ${API_DATABASE_USER}
       POSTGRES_PASSWORD: ${API_DATABASE_PASSWORD}
     ports:
-      - 5433:5432
+      - ${API_DATABASE_PORT}:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    networks:
+      - postgres_network
   
   keycloak-db:
     image: postgres:16.4
@@ -52,6 +68,8 @@ services:
       - keycloak_network
 
 volumes:
+  pgadmin_data:
+    driver: local
   postgres_data:
     driver: local
   keycloak_db_data:
@@ -60,5 +78,7 @@ volumes:
   #   driver: local
 
 networks:
+  postgres_network:
+    driver: bridge
   keycloak_network:
     driver: bridge
