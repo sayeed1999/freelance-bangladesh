@@ -5,7 +5,7 @@ export default function Nav() {
     <ul className="mt-3">
       <li className="my-1"><Link className="hover:bg-gray-500" href="/">Home</Link></li>
       <li className="my-1"><Link className="hover:bg-gray-500" href="/jobs">See Jobs</Link></li>
-      <li className="my-1"><Link className="hover:bg-gray-500" href="/jobs/create">Create job</Link></li>
+      <li className="my-1"><Link className="hover:bg-gray-500" href="/jobs/create">Create Job</Link></li>
     </ul>
   );
 }
