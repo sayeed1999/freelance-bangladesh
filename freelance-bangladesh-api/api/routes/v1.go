@@ -5,6 +5,7 @@ import (
 	"github.com/sayeed1999/freelance-bangladesh/api/handlers"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/infrastructure/identity"
+	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
 	jobsuc "github.com/sayeed1999/freelance-bangladesh/use_cases/jobs_uc"
 	"github.com/sayeed1999/freelance-bangladesh/use_cases/usermgmtuc"
 )
@@ -28,10 +29,16 @@ func InitRoutes(app *gin.Engine) {
 		// Jobs routes
 		jobs := apiV1.Group("/jobs")
 		{
-			jobs.Use(middlewares.Authorize())
-
-			jobs.POST("", handlers.CreateJobHandler(createJobUseCase))
-			jobs.GET("", handlers.GetJobsHandler(getJobsUseCase))
+			jobs.POST(
+				"",
+				middlewares.Authorize(string(enums.ROLE_ADMIN), string(enums.ROLE_TALENT)),
+				handlers.CreateJobHandler(createJobUseCase),
+			)
+			jobs.GET(
+				"",
+				middlewares.Authorize(string(enums.ROLE_ADMIN), string(enums.ROLE_CLIENT)),
+				handlers.GetJobsHandler(getJobsUseCase),
+			)
 		}
 	}
 

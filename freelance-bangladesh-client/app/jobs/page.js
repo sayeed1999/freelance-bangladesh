@@ -18,7 +18,7 @@ export default async function Jobs() {
     return (        
       <main>  
         <SetDynamicRoute></SetDynamicRoute>    
-        <JobList jobs={jobs} />
+        <JobList jobs={jobs.result} total={jobs.total} />
       </main>
     );
   } catch (err) {

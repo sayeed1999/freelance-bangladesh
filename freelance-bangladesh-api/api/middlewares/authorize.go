@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -22,15 +24,16 @@ type Res401Struct struct {
 }
 
 type Claims struct {
-	ResourceAccess client `json:"resource_access,omitempty"`
-	JTI            string `json:"jti,omitempty"`
+	Email         string      `json:"email"`
+	EmailVerified bool        `json:"email_verified"`
+	FirstName     string      `json:"given_name"`
+	LastName      string      `json:"family_name"`
+	Username      string      `json:"preferred_username"`
+	RealmAccess   realmAccess `json:"realm_access,omitempty"`
+	JTI           string      `json:"jti,omitempty"`
 }
 
-type client struct {
-	BackendApiClient clientRoles `json:"BackendApiClient,omitempty"`
-}
-
-type clientRoles struct {
+type realmAccess struct {
 	Roles []string `json:"roles,omitempty"`
 }
 
@@ -38,7 +41,7 @@ type clientRoles struct {
 func Authorize(roles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		cfg := config.GetConfig()
-		realmConfigURL := fmt.Sprintf("%v/realms/%v", cfg.Keycloak.BaseUrl, cfg.Keycloak.Realm)
+		issuerURL := fmt.Sprintf("%v/realms/%v", cfg.Keycloak.BaseUrl, cfg.Keycloak.Realm)
 
 		// Extract token from the Authorization header
 		rawAccessToken := c.GetHeader("Authorization")
@@ -55,13 +58,13 @@ func Authorize(roles ...string) gin.HandlerFunc {
 		}
 
 		client := &http.Client{
-			Timeout:   time.Duration(6000) * time.Second,
+			Timeout:   time.Duration(30000) * time.Second,
 			Transport: tr,
 		}
 
 		ctx := oidc.ClientContext(context.Background(), client)
 
-		provider, err := oidc.NewProvider(ctx, realmConfigURL)
+		provider, err := oidc.NewProvider(ctx, issuerURL)
 		if err != nil {
 			authorizationFailed("failed to get provider: "+err.Error(), c)
 			c.Abort()
@@ -69,12 +72,15 @@ func Authorize(roles ...string) gin.HandlerFunc {
 		}
 
 		oidcConfig := &oidc.Config{
-			ClientID: cfg.Keycloak.RestApi.ClientId,
+			// Note:- Error with clientId: oidc: expected audience "backend-api" got ["account"]
+			ClientID: "account", // cfg.Keycloak.RestApi.ClientId,
+
 		}
 
 		verifier := provider.Verifier(oidcConfig)
 		idToken, err := verifier.Verify(ctx, token)
 		if err != nil {
+			fmt.Println("Failed to verify token", err)
 			authorizationFailed("failed to verify token: "+err.Error(), c)
 			c.Abort()
 			return
@@ -89,20 +95,26 @@ func Authorize(roles ...string) gin.HandlerFunc {
 		}
 
 		// Check user roles against required roles
-		userRoles := IDTokenClaims.ResourceAccess.BackendApiClient.Roles
-		if hasRequiredRole(userRoles, roles) {
-			c.Next()
+		userRoles := IDTokenClaims.RealmAccess.Roles
+		if !hasRequiredRole(userRoles, roles) {
+			// Authorization failed if no roles matched
+			authorizationFailed("user not allowed to access this API", c)
+			c.Abort()
 			return
 		}
 
-		// Authorization failed if no roles matched
-		authorizationFailed("user not allowed to access this API", c)
-		c.Abort()
+		fmt.Println("yessss")
+
+		c.Next()
 	}
 }
 
 // Helper function to check if the user has one of the required roles
 func hasRequiredRole(userRoles, requiredRoles []string) bool {
+	if len(requiredRoles) == 0 {
+		return true
+	}
+
 	for _, role := range requiredRoles {
 		for _, userRole := range userRoles {
 			if userRole == role {
@@ -120,6 +132,23 @@ func authorizationFailed(message string, c *gin.Context) {
 		HTTPCode: http.StatusUnauthorized,
 		Message:  message,
 	})
+}
+
+func PrintIDTokenInDebugLevel(idToken *oidc.IDToken) {
+	// Marshal the token's claims into a JSON string
+	claims := map[string]interface{}{}
+	if err := idToken.Claims(&claims); err != nil {
+		return
+	}
+
+	// Convert the claims to a JSON string
+	claimsJSON, err := json.MarshalIndent(claims, "", "  ")
+	if err != nil {
+		return
+	}
+
+	// Log the token's claims
+	log.Println("ID Token claims:", string(claimsJSON))
 }
 
 func IntrospectToken(token string) (bool, error) {

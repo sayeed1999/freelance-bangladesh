@@ -71,7 +71,7 @@ export const authOptions = {
     async session({ session, token }) {
       // Send properties to the client
       session.access_token = encrypt(token.access_token); // see utils/sessionTokenAccessor.js
-      session.id_token = encrypt(token.id_token);  // see utils/sessionTokenAccessor.js
+      session.id_token = token.id_token;  // see utils/sessionTokenAccessor.js
       session.roles = token.decoded.realm_access.roles;
       session.error = token.error;      
       return session;
