@@ -1,8 +1,9 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+"use client";
+
 import { redirect } from "next/navigation";
 import { getAccessToken } from "@/utils/sessionTokenAccessor";
 import { SetDynamicRoute } from "@/utils/setDynamicRoute";
+import { canActivateTalent } from "@/utils/authorizeHelper";
 
 async function getAllJobs() {
   const url = `${process.env.API_URL}/api/v1/jobs`;
@@ -25,9 +26,7 @@ async function getAllJobs() {
 }
 
 export default async function Jobs() {
-  const session = await getServerSession(authOptions);
-
-  if (!(session && session.roles?.includes("talent"))) {
+  if (!canActivateTalent()) {
     redirect("/unauthorized");
   }
 

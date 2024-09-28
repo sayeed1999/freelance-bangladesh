@@ -1,23 +1,15 @@
 "use client";
 
+import useCanActivateClient from "@/utils/authorizeHelper";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 export default function CreateJobs() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
-
-  useEffect(() => {
-    if (
-      status == "unauthenticated" ||
-      (status == "authenticated" && 
-      (!session.roles?.includes("admin") && !session.roles?.includes("client")))
-    ) {
-      router.push("/unauthorized");
-      router.refresh();
-    }
-  }, [session, status, router]);
+  // This hooks checks the permission to visit this route!
+  useCanActivateClient();
 
   const jobsNameRef = React.useRef();
   const priceRef = React.useRef();
