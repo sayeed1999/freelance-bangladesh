@@ -21,6 +21,7 @@ type Job struct {
 
 func (job *Job) BeforeCreate(tx *gorm.DB) (err error) {
 	job.ID = uuid.New() // Set unique UUID before creating the record
+	job.CreatedAt = time.Now().UTC()
 	return nil
 }
 

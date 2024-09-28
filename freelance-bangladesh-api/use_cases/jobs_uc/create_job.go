@@ -2,10 +2,11 @@ package jobsuc
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/go-playground/validator"
-	"github.com/google/uuid"
+	"github.com/sayeed1999/freelance-bangladesh/database"
 	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
 )
 
@@ -28,6 +29,7 @@ func NewCreateJobUseCase() *createJobUseCase {
 }
 
 func (uc *createJobUseCase) CreateJob(ctx context.Context, request CreateJobRequest) (*CreateJobResponse, error) {
+	db := database.DB.Db
 
 	var validate = validator.New()
 	err := validate.Struct(request)
@@ -36,8 +38,6 @@ func (uc *createJobUseCase) CreateJob(ctx context.Context, request CreateJobRequ
 	}
 
 	var job = &entities.Job{
-		ID:          uuid.New(),
-		CreatedAt:   time.Now(),
 		Title:       request.Title,
 		Description: request.Description,
 		Budget:      request.Budget,
@@ -45,6 +45,9 @@ func (uc *createJobUseCase) CreateJob(ctx context.Context, request CreateJobRequ
 	}
 
 	// TODO: create job or return err
+	if err := db.Create(&job).Error; err != nil {
+		return nil, fmt.Errorf("failed to create user: %s", err.Error())
+	}
 
 	var response = &CreateJobResponse{Job: job}
 	return response, nil
