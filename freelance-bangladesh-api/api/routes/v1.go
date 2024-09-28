@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sayeed1999/freelance-bangladesh/api/handlers"
+	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/infrastructure/identity"
 	jobsuc "github.com/sayeed1999/freelance-bangladesh/use_cases/jobs_uc"
 	"github.com/sayeed1999/freelance-bangladesh/use_cases/usermgmtuc"
@@ -27,6 +28,8 @@ func InitRoutes(app *gin.Engine) {
 		// Jobs routes
 		jobs := apiV1.Group("/jobs")
 		{
+			jobs.Use(middlewares.Authorize())
+
 			jobs.POST("", handlers.CreateJobHandler(createJobUseCase))
 			jobs.GET("", handlers.GetJobsHandler(getJobsUseCase))
 		}

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	_ "embed"
 	"strings"
+	"sync"
 
 	"github.com/spf13/viper"
 )
@@ -12,6 +13,11 @@ import (
 
 //go:embed config.yml
 var defaultConfiguration []byte
+
+var (
+	configInstance *Config
+	once           sync.Once
+)
 
 type Config struct {
 	ListenIP   string
@@ -40,21 +46,26 @@ type Postgres struct {
 	Password string
 }
 
-func Read() (*Config, error) {
-	viper.SetConfigType("yml")
-	viper.SetEnvPrefix("API")
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	viper.AutomaticEnv()
+func GetConfig() *Config {
+	once.Do(func() {
+		viper.SetConfigType("yml")
+		viper.SetEnvPrefix("API")
+		viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+		viper.AutomaticEnv()
 
-	// Read configuration
-	if err := viper.ReadConfig(bytes.NewBuffer(defaultConfiguration)); err != nil {
-		return nil, err
-	}
+		// Read configuration
+		if err := viper.ReadConfig(bytes.NewBuffer(defaultConfiguration)); err != nil {
+			panic("Failed to read configuration: " + err.Error())
+		}
 
-	// Unmarshal the configuration
-	var config Config
-	if err := viper.Unmarshal(&config); err != nil {
-		return nil, err
-	}
-	return &config, nil
+		// Unmarshal the configuration
+		var config Config
+		if err := viper.Unmarshal(&config); err != nil {
+			panic("Failed to unmarshal configuration: " + err.Error())
+		}
+
+		configInstance = &config
+	})
+
+	return configInstance
 }

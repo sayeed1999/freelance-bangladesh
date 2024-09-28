@@ -10,10 +10,7 @@ import (
 )
 
 func main() {
-	cfg, err := config.Read()
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	cfg := config.GetConfig()
 
 	// Initialize Gin engine
 	app := gin.Default()
@@ -24,6 +21,6 @@ func main() {
 	addr := fmt.Sprintf("%v:%v", cfg.ListenIP, cfg.ListenPort)
 	log.Printf("%v api will listen on %v", cfg.Dashboard.Title, addr)
 
-	err = app.Run(addr)
+	err := app.Run(addr)
 	log.Fatal(err)
 }
