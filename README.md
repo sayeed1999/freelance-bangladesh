@@ -7,8 +7,15 @@ To run the docker containers locally, follow these steps:
 - Allow permission to execute the .sh script files by running
 
 ```bash
+chmod +x ./setenv.sh
 chmod +x ./start-docker.local.sh
 chmod +x ./stop-docker.local.sh
+```
+
+- Run the script for setting up envs
+
+```bash
+./setenv.sh
 ```
 
 - Then run the start script by running

@@ -9,6 +9,8 @@
 *.dylib
 
 .env
+#.sh file used to set envs
+setenv.sh
 
 # Test binary, built with `go test -c`
 *.test
