@@ -7,10 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sayeed1999/freelance-bangladesh/api/routes"
 	"github.com/sayeed1999/freelance-bangladesh/config"
+	"github.com/sayeed1999/freelance-bangladesh/database"
 )
 
 func main() {
 	cfg := config.GetConfig()
+
+	// Connect to database instance
+	database.Connect()
 
 	// Initialize Gin engine
 	app := gin.Default()

@@ -24,6 +24,7 @@ type Config struct {
 	ListenPort string
 	Dashboard  *Dashboard
 	Keycloak   *Keycloak
+	Database   *Database
 }
 
 type Dashboard struct {
@@ -40,10 +41,12 @@ type Keycloak struct {
 	}
 }
 
-type Postgres struct {
+type Database struct {
 	Host     string
+	Port     string
 	User     string
 	Password string
+	Name     string
 }
 
 func GetConfig() *Config {

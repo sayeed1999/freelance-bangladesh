@@ -3,14 +3,27 @@ services:
     image: postgres:16.4
     container_name: postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${API_DATABASE_NAME}
+      POSTGRES_USER: ${API_DATABASE_USER}
+      POSTGRES_PASSWORD: ${API_DATABASE_PASSWORD}
+    ports:
+      - 5433:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+  
+  keycloak-db:
+    image: postgres:16.4
+    container_name: keycloak-db
+    environment:
+      POSTGRES_DB: ${KEYCLOAK_DATABASE_NAME}
+      POSTGRES_USER: ${KEYCLOAK_DATABASE_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
     networks:
-      - common_network
+      - keycloak_network
 
   keycloak:
     image: quay.io/keycloak/keycloak:25.0
@@ -24,26 +37,28 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres/${POSTGRES_DB}
-      KC_DB_USERNAME: ${POSTGRES_USER}
-      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KC_DB_URL: jdbc:postgresql://keycloak-db/${KEYCLOAK_DATABASE_NAME} # Note: keycloak-db is the address of the database
+      KC_DB_USERNAME: ${KEYCLOAK_DATABASE_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
     ports:
       - 9990:8080
     volumes:
       - ./keycloak/:/opt/keycloak/data/import
     restart: unless-stopped
     depends_on:
-      - postgres
+      - keycloak-db
     command: -v start-dev --import-realm
     networks:
-      - common_network
+      - keycloak_network
 
 volumes:
   postgres_data:
+    driver: local
+  keycloak_db_data:
     driver: local
   # keycloak_data:
   #   driver: local
 
 networks:
-  common_network:
+  keycloak_network:
     driver: bridge

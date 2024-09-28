@@ -51,6 +51,9 @@ func GetJobsHandler(useCase GetJobsUseCase) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, Jobs)
+		c.JSON(200, gin.H{
+			"total":  len(Jobs),
+			"result": Jobs,
+		})
 	}
 }

@@ -8,3 +8,9 @@ Keycloak:
   RestApi:
     ClientId: ""
     ClientSecret: ""
+Database:
+  Host: ""
+  Port: ""
+  User: ""
+  Password: ""
+  Name: ""
