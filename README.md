@@ -13,7 +13,7 @@ chmod +x ./start-docker.local.sh
 chmod +x ./stop-docker.local.sh
 ```
 
-- Run the script for setting up envs 
+- Run the script for setting up envs
 
 (Note: - a shell cannot modify the env of its parent, using a dot (.) fixes the problem)
 
