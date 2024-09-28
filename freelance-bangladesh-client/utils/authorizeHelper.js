@@ -1,36 +1,41 @@
 import { useEffect } from "react";
-import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { authOptions } from "../app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const useCanActivateClient = () => {
-    const { data: session, status } = useSession();
-    const router = useRouter();
-  
-    useEffect(() => {
-      if (
-        status == "unauthenticated" ||
-        (status == "authenticated" && 
-        !(session.roles?.includes("admin") || session.roles?.includes("client")))
-      ) {
-        router.push("/unauthorized");
-        router.refresh();
-      }
-    }, [session, status, router]);
-}
+  const { data: session, status } = useSession(authOptions);
+  const router = useRouter();
 
-export const canActivateTalent = async () => {
-    const session = await getServerSession(authOptions);
-
-    if (session && 
-        (session.roles?.includes("talent") 
-        || session.roles?.includes("admin"))
+  useEffect(() => {
+    if (
+      status == "unauthenticated" ||
+      (status == "authenticated" && 
+      !(session.roles?.includes("admin") || session.roles?.includes("client")))
     ) {
-        return true;
+      router.push("/unauthorized");
+      router.refresh();
     }
-
-    return false;
+  }, [session, status, router]);
 }
 
-export default useCanActivateClient;
+const useCanActivateTalent = () => {
+  const { data: session, status } = useSession(authOptions);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      status == "unauthenticated" ||
+      (status == "authenticated" && 
+      !(session.roles?.includes("admin") || session.roles?.includes("talent")))
+    ) {
+      router.push("/unauthorized");
+      router.refresh();
+    }
+  }, [session, status, router]);
+}
+
+export {
+  useCanActivateClient,
+  useCanActivateTalent,
+};

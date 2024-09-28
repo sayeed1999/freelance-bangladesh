@@ -1,75 +1,47 @@
 "use client";
 
-import { redirect } from "next/navigation";
-import { getAccessToken } from "@/utils/sessionTokenAccessor";
+import { redirect, useRouter } from "next/navigation";
 import { SetDynamicRoute } from "@/utils/setDynamicRoute";
-import { canActivateTalent } from "@/utils/authorizeHelper";
-
-async function getAllJobs() {
-  const url = `${process.env.API_URL}/api/v1/jobs`;
-
-  let accessToken = await getAccessToken();
-
-  const resp = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + accessToken,
-    },
-  });
-
-  if (resp.ok) {
-    const data = await resp.json();
-    return data;
-  }
-
-  throw new Error("Failed to fetch data. Status: " + resp.status);
-}
+import { useCanActivateTalent } from "@/utils/authorizeHelper";
+import { getAllJobs } from "@/services/jobService";
+import { useEffect, useState } from "react";
+import { mockJobs } from "@/mock_data/mockJobs";
+import JobCard from "@/components/jobs/jobCard";
+import { useSession } from "next-auth/react";
 
 export default async function Jobs() {
-  if (!canActivateTalent()) {
-    redirect("/unauthorized");
-  }
+  const { data: session, status } = useSession();
+  const [jobs, setJobs] = useState(mockJobs);
+  const router = useRouter();
 
-  try {
-    const jobs = await getAllJobs();          
-    
+  useCanActivateTalent();
 
-    return (        
-      <main>  
-        <SetDynamicRoute></SetDynamicRoute>    
-        <h1 className="text-4xl text-center">Jobs</h1>
-        <table className="border border-gray-500 text-lg ml-auto mr-auto mt-6">
-          <thead>
-            <tr>
-              <th className="bg-blue-900 p-2 border border-gray-500">Id</th>
-              <th className="bg-blue-900 p-2 border border-gray-500">Name</th>
-              <th className="bg-blue-900 p-2 border border-gray-500">
-                Price
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {jobs.map((p) => (
-              <tr key={p.Id}>
-                <td className="p-1 border border-gray-500">{p.Id}</td>
-                <td className="p-1 border border-gray-500">{p.Name}</td>
-                <td className="p-1 border border-gray-500">{p.Price}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </main>
-    );
-  } catch (err) {
-    console.error(err);
+  // useEffect(() => {
+  //   getAllJobs()
+  //     .then((res) => setJobs(res))
+  //     .catch((err) => alert(err));
+  // }, []);
 
+  if (status == "loading") {
     return (
       <main>
-        <h1 className="text-4xl text-center">Jobs</h1>
-        <p className="text-red-600 text-center text-lg">
-          Sorry, an error happened. Check the server logs.
-        </p>
+        <h1 className="text-4xl text-center">See jobs</h1>
+        <div className="text-center text-2xl">Loading...</div>
       </main>
     );
   }
+
+  return (        
+    <main>  
+      <SetDynamicRoute></SetDynamicRoute>    
+      <div className="container mx-auto px-4">
+        <h1 className="text-3xl font-bold text-center my-8">Available Jobs</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {jobs.map((job) => (
+            <JobCard key={job.id} job={job} />
+          ))}
+        </div>
+      </div>
+    </main>
+  );
 }

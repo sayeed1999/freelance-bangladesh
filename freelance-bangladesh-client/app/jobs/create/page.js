@@ -1,14 +1,14 @@
 "use client";
 
-import useCanActivateClient from "@/utils/authorizeHelper";
+import { useCanActivateClient } from "@/utils/authorizeHelper";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function CreateJobs() {
   const { status } = useSession();
   const router = useRouter();
-  // This hooks checks the permission to visit this route!
+
   useCanActivateClient();
 
   const jobsNameRef = React.useRef();
