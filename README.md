@@ -34,3 +34,9 @@ chmod +x ./stop-docker.local.sh
 ```bash
 ./stop-docker.local.sh
 ```
+
+## Important Notes
+
+- When registering server in pgadmin, you have to use the postgres port where the docker container is really running, not where it is exposed at.
+
+e.g for `5433:5432` in compose file, you have to use '5432' in port to be able to register server in pgadmin.
