@@ -9,22 +9,24 @@ const JobCreate = () => {
     const budgetRef = React.useRef();
     const deadlineRef = React.useRef();
 
+    const handleCreate = () => {
+      createJob({
+        title: titleRef.current.value,
+        description: descriptionRef.current.value,
+        budget: parseFloat(budgetRef.current.value),
+        deadline: new Date(deadlineRef.current.value).toISOString(),
+      }).then(() => {
+        alert("create success!")
+      }).catch((err) => {
+        alert(err.message ?? "Some unexpected error has occurred.")
+      })
+    }
+
     return (
       <Form
         formTitle="Create Job"
         submitBtnName="Create"
-        dispatchAction={() => {
-          createJob({
-            title: titleRef.current.value,
-            description: descriptionRef.current.value,
-            budget: budgetRef.current.value,
-            deadline: deadlineRef.current.value,
-          }).then(() => {
-            alert("create success!")
-          }).catch((err) => {
-            alert(err.message)
-          })
-        }}
+        dispatchAction={handleCreate}
         formItems={[
           {
             label: "Job Title",
