@@ -17,6 +17,10 @@ const useCanActivateClient = () => {
       router.refresh();
     }
   }, [session, status, router]);
+
+  return {
+    status
+  }
 }
 
 const useCanActivateTalent = () => {

@@ -22,7 +22,6 @@ export default async function Jobs() {
       </main>
     );
   } catch (err) {
-    {console.error(err)}
     return (
       <main>
         <div className="text-center text-2xl">Failed to load jobs... Please refresh the page!</div>

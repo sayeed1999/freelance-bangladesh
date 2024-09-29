@@ -1,56 +1,28 @@
 import React from "react";
-import { useEffect, useState } from "react";
 
 interface FormType {
   formTitle: string;
   formItems: FormItemType[];
-  dispatchAction: (payload: any) => any;
+  dispatchAction: () => any;
   submitBtnName: string;
 }
 
 interface FormItemType {
   label: string;
   name: string;
-  value: string | number | readonly string[] | undefined;
   type: string;
   id: string;
+  ref: React.MutableRefObject<any>;
   placeholder: string;
   required: boolean;
   validationError: string;
 }
 
 const Form = (form: FormType) => {
-  const [input, setInput] = useState<any>({});
-
   const handleSubmitEvent = (e: any): any => {
     e.preventDefault();
-
-    const requiredFields = form.formItems.filter((x) => x.required);
-
-    Object.keys(input).forEach((key) => {
-      // Note: If it is a required field but not provided in payload, then throw validation error!
-      const requiredField = requiredFields.find(
-        (requiredField) => requiredField.name === key
-      );
-
-      if (requiredField && !input[key]) {
-        return alert(`Please Provide a Valid ${requiredField.label}`);
-      }
-    });
-
     // Call API using dispatch action
-    form.dispatchAction(input);
-  };
-
-  const handleInput = (e: any) => {
-    if (!e.target) return;
-
-    const { name, value } = e.target;
-
-    setInput((prev: any) => ({
-      ...prev,
-      [name]: value,
-    }));
+    form.dispatchAction();
   };
 
   const renderFormItem = (formItem: FormItemType, index: number) => {
@@ -62,9 +34,8 @@ const Form = (form: FormType) => {
             <textarea
               id={formItem.id}
               name={formItem.name}
-              value={input[formItem.name] ?? formItem.value}
+              ref={formItem.ref}
               placeholder={formItem.placeholder}
-              onChange={handleInput}
               className="w-full px-4 py-2 border rounded-md"
               rows={4}
             />
@@ -81,8 +52,8 @@ const Form = (form: FormType) => {
               type="checkbox"
               id={formItem.id}
               name={formItem.name}
-              checked={input[formItem.name] ?? formItem.value}
-              onChange={handleInput}
+              ref={formItem.ref}
+              // checked={!!formItem.value}
               className="mr-2"
             />
             {formItem.label}
@@ -99,9 +70,8 @@ const Form = (form: FormType) => {
               type={formItem.type ?? "text"}
               id={formItem.id}
               name={formItem.name}
-              value={input[formItem.name] ?? formItem.value}
+              ref={formItem.ref}
               placeholder={formItem.placeholder}
-              onChange={handleInput}
               className="w-full px-4 py-2 border rounded-md"
             />
             <div id={formItem.id} className="sr-only">
