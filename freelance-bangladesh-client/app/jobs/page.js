@@ -8,7 +8,10 @@ import { redirect } from "next/navigation";
 export default async function Jobs() {
   const session = await getServerSession(authOptions);
 
-  if (!(session && (session.roles?.includes("talent") || session.roles?.includes("admin")))) {
+  if (!(session && 
+    (session.roles?.includes("talent") || 
+    session.roles?.includes("client") || 
+    session.roles?.includes("admin")))) {
     redirect("/unauthorized");
   }
 

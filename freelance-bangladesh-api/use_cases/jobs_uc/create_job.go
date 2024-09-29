@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator"
+	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/database"
 	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
 )
@@ -28,7 +29,7 @@ func NewCreateJobUseCase() *createJobUseCase {
 	return &createJobUseCase{}
 }
 
-func (uc *createJobUseCase) CreateJob(ctx context.Context, request CreateJobRequest) (*CreateJobResponse, error) {
+func (uc *createJobUseCase) CreateJob(ctx context.Context, claims middlewares.Claims, request CreateJobRequest) (*CreateJobResponse, error) {
 	db := database.DB.Db
 
 	var validate = validator.New()
@@ -38,10 +39,11 @@ func (uc *createJobUseCase) CreateJob(ctx context.Context, request CreateJobRequ
 	}
 
 	var job = &entities.Job{
-		Title:       request.Title,
-		Description: request.Description,
-		Budget:      request.Budget,
-		Deadline:    request.Deadline,
+		ClientKeycloakID: claims.Email,
+		Title:            request.Title,
+		Description:      request.Description,
+		Budget:           request.Budget,
+		Deadline:         request.Deadline,
 	}
 
 	// TODO: create job or return err

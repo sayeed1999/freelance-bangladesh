@@ -43,7 +43,10 @@ func InitRoutes(app *gin.Engine) {
 
 			jobs.GET(
 				"",
-				middlewares.Authorize(string(enums.ROLE_ADMIN), string(enums.ROLE_TALENT)),
+				middlewares.Authorize(
+					string(enums.ROLE_ADMIN),
+					string(enums.ROLE_CLIENT),
+					string(enums.ROLE_TALENT)),
 				handlers.GetActiveJobsHandler(getActiveJobsUseCase),
 			)
 		}

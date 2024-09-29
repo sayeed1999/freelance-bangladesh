@@ -103,7 +103,7 @@ func Authorize(roles ...string) gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println("yessss")
+		c.Set("userClaims", IDTokenClaims)
 
 		c.Next()
 	}
