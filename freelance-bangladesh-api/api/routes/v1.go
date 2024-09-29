@@ -16,6 +16,7 @@ func InitRoutes(app *gin.Engine) {
 	registerUseCase := usermgmtuc.NewRegisterUseCase(identityManager)
 	createJobUseCase := jobsuc.NewCreateJobUseCase()
 	getJobsUseCase := jobsuc.NewGetJobsUseCase()
+	getActiveJobsUseCase := jobsuc.NewGetActiveJobsUseCase()
 
 	// Grouping API v1 routes
 	apiV1 := app.Group("/api/v1")
@@ -35,9 +36,15 @@ func InitRoutes(app *gin.Engine) {
 				handlers.CreateJobHandler(createJobUseCase),
 			)
 			jobs.GET(
+				"/internal",
+				middlewares.Authorize(string(enums.ROLE_ADMIN)),
+				handlers.GetJobsHandler(getJobsUseCase),
+			)
+
+			jobs.GET(
 				"",
 				middlewares.Authorize(string(enums.ROLE_ADMIN), string(enums.ROLE_TALENT)),
-				handlers.GetJobsHandler(getJobsUseCase),
+				handlers.GetActiveJobsHandler(getActiveJobsUseCase),
 			)
 		}
 	}

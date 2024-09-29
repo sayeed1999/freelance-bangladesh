@@ -16,10 +16,13 @@ type CreateJobUseCase interface {
 
 // GetJobsUseCase interface for getting jobs
 type GetJobsUseCase interface {
-	GetJobs(ctx context.Context) ([]entities.Job, error) // Updated to return an error
+	GetJobs(ctx context.Context) ([]entities.Job, error)
 }
 
-// CreateJobHandler handles the creation of a job
+type GetActiveJobsUseCase interface {
+	GetActiveJobs(ctx context.Context) ([]entities.Job, error)
+}
+
 func CreateJobHandler(useCase CreateJobUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var request jobsuc.CreateJobRequest
@@ -42,10 +45,24 @@ func CreateJobHandler(useCase CreateJobUseCase) gin.HandlerFunc {
 	}
 }
 
-// GetJobsHandler handles retrieving jobs
 func GetJobsHandler(useCase GetJobsUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		Jobs, err := useCase.GetJobs(c.Request.Context()) // Capture potential error
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(200, gin.H{
+			"total":  len(Jobs),
+			"result": Jobs,
+		})
+	}
+}
+
+func GetActiveJobsHandler(useCase GetActiveJobsUseCase) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		Jobs, err := useCase.GetActiveJobs(c.Request.Context()) // Capture potential error
 		if err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
