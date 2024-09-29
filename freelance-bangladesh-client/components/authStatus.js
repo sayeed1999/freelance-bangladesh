@@ -14,14 +14,17 @@ async function keycloakSessionLogOut() {
 export default function AuthStatus() {
   const { data: session, status } = useSession(); 
 
+  const forceSignout = () => {
+    keycloakSessionLogOut().then(() => signOut({ callbackUrl: "/" }));
+  }
+
   useEffect(() => {
-    
     if (
       status != "loading" &&
       session &&
       session?.error === "RefreshAccessTokenError"
     ) {
-      signOut({ callbackUrl: "/" });
+      forceSignout();
     }
   }, [session, status]);
 
@@ -34,9 +37,7 @@ export default function AuthStatus() {
         Logged in as <span className="text-yellow-100">{session.user.email}</span>{" "}
         <button
           className="bg-blue-900 font-bold text-white py-1 px-2 rounded border border-gray-50"
-          onClick={() => {
-            keycloakSessionLogOut().then(() => signOut({ callbackUrl: "/" }));
-          }}>
+          onClick={() => forceSignout()}>
           Log out
         </button>
       </div>
