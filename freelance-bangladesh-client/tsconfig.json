@@ -34,7 +34,8 @@
     "**/*.tsx",
     "app/api/auth/[...nextauth]/route.js",
     "app/api/auth/[...nextauth]/route.js",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "services/api.ts"
   ],
   "exclude": [
     "node_modules"

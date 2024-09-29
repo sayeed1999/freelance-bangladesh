@@ -1,43 +1,19 @@
 import { getAccessToken } from "@/utils/sessionTokenAccessor";
+import { callApi } from "./api";
 
 export const getAllJobs = async () => {
-  const url = `${process.env.API_URL}/api/v1/jobs`;
+  let accessToken = await getAccessToken() || "";
 
-  let accessToken = await getAccessToken();
-
-  const resp = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + accessToken,
-    },
+  return await callApi({ 
+    url: `${process.env.API_URL}/api/v1/jobs`, 
+    accessToken,
   });
-
-  if (resp.ok) {
-    const data = await resp.json();
-    return data;
-  }
-
-  throw new Error("Failed to fetch jobs. Status: " + resp.status);
 }
 
-export const createJob = async (body: any) => {
-  const url = `/api/jobs`;
-
-  const resp = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body), // body should be inside the fetch options object
+// Note: This api lives inside next.js server
+export const createJob = (body: any) => 
+  callApi({ 
+    url: `/api/jobs`, 
+    method: "POST", 
+    body 
   });
-
-  const data = await resp.json();
-
-  if (resp.ok) {
-    return data;
-  }
-
-  console.error(data)
-
-  throw new Error("Failed to create job with error: " + data?.error);
-}
