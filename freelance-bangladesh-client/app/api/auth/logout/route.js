@@ -10,7 +10,8 @@ export async function GET() {
     const idToken = await getIdToken();
 
     // this will log out the user on Keycloak side
-    var url = `${process.env.END_SESSION_URL}?id_token_hint=${idToken}&post_logout_redirect_uri=${encodeURIComponent(process.env.NEXTAUTH_URL)}`;
+    var baseURL = `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/logout`;
+    var url = `${baseURL}?id_token_hint=${idToken}&post_logout_redirect_uri=${encodeURIComponent(process.env.NEXTAUTH_URL)}`;
 
     try {
       const resp = await fetch(url, { method: "GET" });

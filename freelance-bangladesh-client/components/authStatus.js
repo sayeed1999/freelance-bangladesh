@@ -14,20 +14,9 @@ async function keycloakSessionLogOut() {
 export default function AuthStatus() {
   const { data: session, status } = useSession(); 
 
-  const forceSignout = () => {
+  const federatedLogOut = () => {
     keycloakSessionLogOut().then(() => signOut({ callbackUrl: "/" }));
   }
-
-  useEffect(() => {
-    if (
-      status != "loading" &&
-      session &&
-      session?.error === "RefreshAccessTokenError"
-    ) {
-      forceSignout();
-    }
-  }, [session, status]);
-
 
   if (status == "loading") {
     return <div className="my-3">Loading...</div>;
@@ -37,7 +26,7 @@ export default function AuthStatus() {
         Logged in as <span className="text-yellow-100">{session.user.email}</span>{" "}
         <button
           className="bg-blue-900 font-bold text-white py-1 px-2 rounded border border-gray-50"
-          onClick={() => forceSignout()}>
+          onClick={() => federatedLogOut()}>
           Log out
         </button>
       </div>
