@@ -38,15 +38,20 @@ func (uc *createJobUseCase) CreateJob(ctx context.Context, claims middlewares.Cl
 		return nil, err
 	}
 
-	var job = &entities.Job{
-		ClientKeycloakID: claims.Email,
-		Title:            request.Title,
-		Description:      request.Description,
-		Budget:           request.Budget,
-		Deadline:         request.Deadline,
+	var client entities.Client
+
+	if err := db.First(&client, "Email = ?", claims.Email).Error; err != nil {
+		return nil, fmt.Errorf("failed to get client: %v", err.Error())
 	}
 
-	// TODO: create job or return err
+	var job = &entities.Job{
+		ClientID:    client.ID,
+		Title:       request.Title,
+		Description: request.Description,
+		Budget:      request.Budget,
+		Deadline:    request.Deadline,
+	}
+
 	if err := db.Create(&job).Error; err != nil {
 		return nil, fmt.Errorf("failed to create user: %s", err.Error())
 	}

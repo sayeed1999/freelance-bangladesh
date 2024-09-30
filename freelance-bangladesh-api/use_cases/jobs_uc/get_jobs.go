@@ -18,21 +18,29 @@ func NewGetJobsUseCase() *getJobsUseCase {
 	return &getJobsUseCase{}
 }
 
-func (uc *getJobsUseCase) GetJobs(ctx context.Context, userClaims middlewares.Claims) ([]entities.Job, error) {
+func (uc *getJobsUseCase) GetJobs(ctx context.Context, claims middlewares.Claims) ([]entities.Job, error) {
 	db := database.DB.Db
 
 	jobs := []entities.Job{}
 
 	switch {
-	case slices.Contains(userClaims.RealmAccess.Roles, string(enums.ROLE_ADMIN)):
+	case slices.Contains(claims.RealmAccess.Roles, string(enums.ROLE_ADMIN)):
 		// No filtering needed.
 		break
-	case slices.Contains(userClaims.RealmAccess.Roles, string(enums.ROLE_TALENT)):
+
+	case slices.Contains(claims.RealmAccess.Roles, string(enums.ROLE_TALENT)):
 		// Talent: Return all active jobs
 		db = db.Where("status = ?", entities.ACTIVE)
-	case slices.Contains(userClaims.RealmAccess.Roles, string(enums.ROLE_CLIENT)):
+
+	case slices.Contains(claims.RealmAccess.Roles, string(enums.ROLE_CLIENT)):
 		// Client: Return jobs for this client
-		db = db.Where("client_keycloak_id = ?", userClaims.Email)
+		var client entities.Client
+
+		if err := db.First(&client, "Email = ?", claims.Email).Error; err != nil {
+			return nil, fmt.Errorf("failed to get client: %v", err.Error())
+		}
+
+		db = db.Where("client_id = ?", client.ID)
 	default:
 		// If role doesn't match any expected roles, return an error
 		return nil, errors.New("unauthorized: invalid role")

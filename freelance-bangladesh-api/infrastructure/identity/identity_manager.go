@@ -6,6 +6,9 @@ import (
 
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/pkg/errors"
+	"github.com/sayeed1999/freelance-bangladesh/database"
+	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
+	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
 	"github.com/spf13/viper"
 )
 
@@ -63,6 +66,31 @@ func (im *identityManager) CreateUser(ctx context.Context, user gocloak.User, pa
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to add a realm role to user")
+	}
+
+	db := database.DB.Db
+
+	// TODO: - sync the user in our database
+	if role == string(enums.ROLE_CLIENT) {
+		client := &entities.Client{
+			Email: *user.Email,
+			Name:  *user.FirstName + " " + *user.LastName,
+			// Phone: add phone from req body //TODO:
+			IsVerified: true,
+		}
+		if err := db.Create(&client).Error; err != nil {
+			return nil, fmt.Errorf("failed to sync client account with auth provider: %s", err.Error())
+		}
+	} else if role == string(enums.ROLE_TALENT) {
+		talent := &entities.Talent{
+			Email: *user.Email,
+			Name:  *user.FirstName + " " + *user.LastName,
+			// Phone: add phone from req body //TODO:
+			IsVerified: false, // talents are manually verified by admin
+		}
+		if err := db.Create(&talent).Error; err != nil {
+			return nil, fmt.Errorf("failed to sync talent account with auth provider: %s", err.Error())
+		}
 	}
 
 	userKeycloak, err := client.GetUserByID(ctx, token.AccessToken, im.realm, userId)

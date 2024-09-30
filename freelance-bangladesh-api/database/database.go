@@ -43,8 +43,12 @@ func Connect() {
 	db.Logger = logger.Default.LogMode(logger.Info)
 	log.Println("running migrations on database")
 
-	err = db.AutoMigrate(&entities.Job{}, &entities.Bid{})
-	if err != nil {
+	if err = db.AutoMigrate(
+		&entities.Talent{},
+		&entities.Client{},
+		&entities.Job{},
+		&entities.Bid{},
+	); err != nil {
 		log.Fatal(err)
 	}
 
