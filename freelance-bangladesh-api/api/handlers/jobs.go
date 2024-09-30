@@ -11,18 +11,12 @@ import (
 	jobsuc "github.com/sayeed1999/freelance-bangladesh/use_cases/jobs_uc"
 )
 
-// CreateJobUseCase interface for creating a job
 type CreateJobUseCase interface {
 	CreateJob(ctx context.Context, claims middlewares.Claims, request jobsuc.CreateJobRequest) (*jobsuc.CreateJobResponse, error)
 }
 
-// GetJobsUseCase interface for getting jobs
 type GetJobsUseCase interface {
-	GetJobs(ctx context.Context) ([]entities.Job, error)
-}
-
-type GetActiveJobsUseCase interface {
-	GetActiveJobs(ctx context.Context, userClaims middlewares.Claims) ([]entities.Job, error)
+	GetJobs(ctx context.Context, userClaims middlewares.Claims) ([]entities.Job, error)
 }
 
 func CreateJobHandler(useCase CreateJobUseCase) gin.HandlerFunc {
@@ -60,21 +54,6 @@ func CreateJobHandler(useCase CreateJobUseCase) gin.HandlerFunc {
 
 func GetJobsHandler(useCase GetJobsUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		Jobs, err := useCase.GetJobs(c.Request.Context()) // Capture potential error
-		if err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
-			return
-		}
-
-		c.JSON(200, gin.H{
-			"total":  len(Jobs),
-			"result": Jobs,
-		})
-	}
-}
-
-func GetActiveJobsHandler(useCase GetActiveJobsUseCase) gin.HandlerFunc {
-	return func(c *gin.Context) {
 		claims, exists := c.Get("userClaims")
 		if !exists {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "no claims found"})
@@ -86,7 +65,7 @@ func GetActiveJobsHandler(useCase GetActiveJobsUseCase) gin.HandlerFunc {
 			return
 		}
 
-		Jobs, err := useCase.GetActiveJobs(c.Request.Context(), userClaims) // Capture potential error
+		Jobs, err := useCase.GetJobs(c.Request.Context(), userClaims) // Capture potential error
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
