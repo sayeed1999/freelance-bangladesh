@@ -9,6 +9,7 @@ import (
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
 	jobsuc "github.com/sayeed1999/freelance-bangladesh/use_cases/jobs_uc"
+	"github.com/sayeed1999/freelance-bangladesh/utils"
 )
 
 type CreateJobUseCase interface {
@@ -54,18 +55,13 @@ func CreateJobHandler(useCase CreateJobUseCase) gin.HandlerFunc {
 
 func GetJobsHandler(useCase GetJobsUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		claims, exists := c.Get("userClaims")
-		if !exists {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "no claims found"})
-		}
-
-		userClaims, ok := claims.(middlewares.Claims)
-		if !ok {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to cast claims"})
+		userClaims, err := utils.GetUserClaims(c)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			return
 		}
 
-		Jobs, err := useCase.GetJobs(c.Request.Context(), userClaims) // Capture potential error
+		Jobs, err := useCase.GetJobs(c.Request.Context(), userClaims)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
