@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Nerzal/gocloak/v13"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"github.com/sayeed1999/freelance-bangladesh/database"
 	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
@@ -38,7 +39,12 @@ func (im *identityManager) loginRestApiClient(ctx context.Context) (*gocloak.JWT
 	return token, nil
 }
 
-func (im *identityManager) CreateUser(ctx context.Context, user gocloak.User, password string, role string) (*gocloak.User, error) {
+func (im *identityManager) CreateUser(
+	ctx context.Context,
+	user gocloak.User,
+	password string,
+	role string,
+	phone string) (*gocloak.User, error) {
 
 	token, err := im.loginRestApiClient(ctx)
 	if err != nil {
@@ -50,6 +56,11 @@ func (im *identityManager) CreateUser(ctx context.Context, user gocloak.User, pa
 	userId, err := client.CreateUser(ctx, token.AccessToken, im.realm, user)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create the user")
+	}
+
+	parsedUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error parsing userId into uuid")
 	}
 
 	err = client.SetPassword(ctx, token.AccessToken, userId, im.realm, password, false)
@@ -70,24 +81,14 @@ func (im *identityManager) CreateUser(ctx context.Context, user gocloak.User, pa
 
 	db := database.DB.Db
 
-	// TODO: - sync the user in our database
-	if role == string(enums.ROLE_CLIENT) || role == string(enums.ROLE_ADMIN) {
-		// Note:- here we are giving client access to all admins
-		client := &entities.Client{
-			Email: *user.Email,
-			Name:  *user.FirstName + " " + *user.LastName,
-			// Phone: add phone from req body //TODO:
-			IsVerified: true,
-		}
-		if err := db.Create(&client).Error; err != nil {
-			return nil, fmt.Errorf("failed to sync client account with auth provider: %s", err.Error())
-		}
-	} else if role == string(enums.ROLE_TALENT) {
+	// Sync keycloak user to our database!!
+	if role == string(enums.ROLE_TALENT) {
 		talent := &entities.Talent{
-			Email: *user.Email,
-			Name:  *user.FirstName + " " + *user.LastName,
-			// Phone: add phone from req body //TODO:
-			IsVerified: false, // talents are manually verified by admin
+			KeycloakUserID: parsedUUID,
+			Email:          *user.Email,
+			Name:           *user.FirstName + " " + *user.LastName,
+			Phone:          phone,
+			IsVerified:     false, // an admin need to verify a talent
 		}
 		if err := db.Create(&talent).Error; err != nil {
 			return nil, fmt.Errorf("failed to sync talent account with auth provider: %s", err.Error())
