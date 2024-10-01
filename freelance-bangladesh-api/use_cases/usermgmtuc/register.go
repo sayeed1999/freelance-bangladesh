@@ -50,17 +50,18 @@ func (uc *registerUseCase) Register(ctx context.Context, request RegisterRequest
 		Username:      gocloak.StringP(request.Email),
 		FirstName:     gocloak.StringP(request.FirstName),
 		LastName:      gocloak.StringP(request.LastName),
-		EmailVerified: gocloak.BoolP(true), // TODO: make false
+		EmailVerified: gocloak.BoolP(false),
 		Enabled:       gocloak.BoolP(true),
 		RealmRoles:    &[]string{request.Role},
 	}
 
 	var roleNameLowerCase = strings.ToLower(request.Role)
 	switch roleNameLowerCase {
+	case string(enums.ROLE_CLIENT):
 	case string(enums.ROLE_TALENT):
 		break
 	default:
-		return nil, errors.Wrap(err, "unable to signup user other than talent")
+		return nil, errors.Wrap(err, "unable to signup user other than client or talent")
 	}
 
 	userResponse, err := uc.identityManager.CreateUser(

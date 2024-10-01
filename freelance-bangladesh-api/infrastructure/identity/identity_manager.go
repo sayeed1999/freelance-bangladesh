@@ -81,7 +81,21 @@ func (im *identityManager) CreateUser(
 
 	db := database.DB.Db
 
-	// Sync keycloak user to our database!!
+	// Sync keycloak user (client) to our database!!
+	if role == string(enums.ROLE_CLIENT) {
+		client := &entities.Client{
+			KeycloakUserID: parsedUUID,
+			Email:          *user.Email,
+			Name:           *user.FirstName + " " + *user.LastName,
+			Phone:          phone,
+			IsVerified:     false, // an admin need to verify a talent
+		}
+		if err := db.Create(&client).Error; err != nil {
+			return nil, fmt.Errorf("failed to sync client account with auth provider: %s", err.Error())
+		}
+	}
+
+	// Sync keycloak user (talent) to our database!!
 	if role == string(enums.ROLE_TALENT) {
 		talent := &entities.Talent{
 			KeycloakUserID: parsedUUID,

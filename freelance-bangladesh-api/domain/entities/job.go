@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Job struct {
@@ -26,3 +27,8 @@ const (
 	COMPLETED jobStatus = "completed"
 	CLOSED    jobStatus = "closed"
 )
+
+func (u *Job) BeforeCreate(tx *gorm.DB) (err error) {
+	u.ID = uuid.New()
+	return nil
+}

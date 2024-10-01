@@ -13,8 +13,3 @@ type BaseModel struct {
 	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
-
-func (u *Talent) BeforeCreate(tx *gorm.DB) (err error) {
-	u.ID = uuid.New()
-	return nil
-}
