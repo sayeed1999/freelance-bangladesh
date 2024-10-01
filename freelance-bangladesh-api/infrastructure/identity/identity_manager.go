@@ -71,7 +71,8 @@ func (im *identityManager) CreateUser(ctx context.Context, user gocloak.User, pa
 	db := database.DB.Db
 
 	// TODO: - sync the user in our database
-	if role == string(enums.ROLE_CLIENT) {
+	if role == string(enums.ROLE_CLIENT) || role == string(enums.ROLE_ADMIN) {
+		// Note:- here we are giving client access to all admins
 		client := &entities.Client{
 			Email: *user.Email,
 			Name:  *user.FirstName + " " + *user.LastName,
