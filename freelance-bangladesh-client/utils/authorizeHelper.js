@@ -3,6 +3,18 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
+const useCanActivePublicRoute = () => {
+  const { data: session, status } = useSession(authOptions);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status !== "unauthenticated") {
+      router.push("/");
+      router.refresh();
+    }
+  }, [session, status, router]);
+}
+
 const useCanActivateClient = () => {
   const { data: session, status } = useSession(authOptions);
   const router = useRouter();
@@ -40,6 +52,7 @@ const useCanActivateTalent = () => {
 }
 
 export {
+  useCanActivePublicRoute as useCanActivePublicComponent,
   useCanActivateClient,
   useCanActivateTalent,
 };

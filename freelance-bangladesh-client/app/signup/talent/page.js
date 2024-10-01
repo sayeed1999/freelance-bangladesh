@@ -3,8 +3,11 @@
 import React from "react";
 import { signupUser } from "@/services/userService";
 import Form from "@/components/form";
+import { useCanActivePublicComponent } from "@/utils/authorizeHelper";
 
 export default function SignupTalentPage() {
+  useCanActivePublicComponent(); // public route guard
+
   const emailRef = React.useRef();
   const firstnameRef = React.useRef();
   const lastnameRef = React.useRef();
