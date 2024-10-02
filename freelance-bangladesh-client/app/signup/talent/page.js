@@ -29,6 +29,13 @@ export default function SignupTalentPage() {
       Role: "talent",
     }).then(() => {
       alert("signup success!")
+      // reset
+      emailRef.current.value = null;
+      firstnameRef.current.value = null;
+      lastnameRef.current.value = null;
+      phoneRef.current.value = null;
+      passwordRef.current.value = null;
+      confirmPasswordRef.current.value = null;
     }).catch((err) => {
       alert(err.message ?? "Some unexpected error has occurred.")
     })
