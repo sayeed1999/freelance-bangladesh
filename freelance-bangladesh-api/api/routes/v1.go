@@ -6,6 +6,7 @@ import (
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/infrastructure/identity"
 	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
+	admindashboarduc "github.com/sayeed1999/freelance-bangladesh/use_cases/admin_dashboard_uc"
 	jobsuc "github.com/sayeed1999/freelance-bangladesh/use_cases/jobs_uc"
 	"github.com/sayeed1999/freelance-bangladesh/use_cases/usermgmtuc"
 )
@@ -14,6 +15,8 @@ import (
 func InitRoutes(app *gin.Engine) {
 	identityManager := identity.NewIdentityManager()
 	registerUseCase := usermgmtuc.NewRegisterUseCase(identityManager)
+	verifyClientUseCase := admindashboarduc.NewVerifyClientUseCase()
+	verifyTalentUseCase := admindashboarduc.NewVerifyTalentUseCase()
 	createJobUseCase := jobsuc.NewCreateJobUseCase()
 	getJobsUseCase := jobsuc.NewGetJobsUseCase()
 
@@ -24,6 +27,21 @@ func InitRoutes(app *gin.Engine) {
 		users := apiV1.Group("/users")
 		{
 			users.POST("", handlers.RegisterHandler(registerUseCase))
+		}
+
+		// Admin dashboard routes
+		adminDashboard := apiV1.Group("/admin-dashboard")
+		{
+			adminDashboard.Use(middlewares.Authorize(string((enums.ROLE_ADMIN))))
+
+			adminDashboard.POST(
+				"/clients/verify",
+				handlers.VerifyClientHandler(verifyClientUseCase))
+
+			adminDashboard.POST(
+				"/talents/verify",
+				handlers.VerifyTalentHandler(verifyTalentUseCase))
+
 		}
 
 		// Jobs routes
