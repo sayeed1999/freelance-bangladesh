@@ -14,7 +14,7 @@ const JobCreate = () => {
         title: titleRef.current.value,
         description: descriptionRef.current.value,
         budget: parseFloat(budgetRef.current.value),
-        deadline: new Date(deadlineRef.current.value).toISOString(),
+        deadline: deadlineRef.current.value ? new Date(deadlineRef.current.value).toISOString(): null,
       }).then(() => {
         alert("create success!")
       }).catch((err) => {

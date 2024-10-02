@@ -67,13 +67,14 @@ services:
     networks:
       - keycloak_network
 
-  mailhog:
+  mail-server:
     image: mailhog/mailhog
-    logging:
-      driver: 'none'  # disable saving logs
+    container_name: mail-server
     ports:
       - 1025:1025 # smtp server
       - 8025:8025 # web ui
+    networks:
+      - keycloak_network
 
 volumes:
   pgadmin_data:

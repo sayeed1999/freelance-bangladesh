@@ -7,10 +7,9 @@ To run the docker containers locally, follow these steps:
 - Allow permission to execute the .sh script files by running
 
 ```bash
-chmod +x ./setenv.sh
-chmod +x ./docker/init.sql
-chmod +x ./docker/start-docker.local.sh
-chmod +x ./docker/stop-docker.local.sh
+chmod +x ./scripts/setenv.sh
+chmod +x ./scripts/start-docker.local.sh
+chmod +x ./scripts/stop-docker.local.sh
 ```
 
 - Run the script for setting up envs
@@ -18,15 +17,13 @@ chmod +x ./docker/stop-docker.local.sh
 (Note: - a shell cannot modify the env of its parent, using a dot (.) fixes the problem)
 
 ```bash
-. ./setenv.sh
+. ./scripts/setenv.sh
 ```
 
-- Navigate to ./docker dir using `cd docker`
-
-- Then run the start script by running
+- Then run the docker start script by running
 
 ```bash
-./start-docker.local.sh
+./scripts/start-docker.local.sh
 ```
 
 - Navigate to `http://localhost:9990` and check keycloak is running properly!!
@@ -34,7 +31,7 @@ chmod +x ./docker/stop-docker.local.sh
 - To stop the containers, run the stop script by running
 
 ```bash
-./stop-docker.local.sh
+./scripts/stop-docker.local.sh
 ```
 
 ## Important Notes
