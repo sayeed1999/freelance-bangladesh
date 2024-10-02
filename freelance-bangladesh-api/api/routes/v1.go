@@ -13,55 +13,13 @@ import (
 
 // InitRoutes initializes all the routes
 func InitRoutes(app *gin.Engine) {
-	identityManager := identity.NewIdentityManager()
-	registerUseCase := usermgmtuc.NewRegisterUseCase(identityManager)
-	verifyClientUseCase := admindashboarduc.NewVerifyClientUseCase()
-	verifyTalentUseCase := admindashboarduc.NewVerifyTalentUseCase()
-	createJobUseCase := jobsuc.NewCreateJobUseCase()
-	getJobsUseCase := jobsuc.NewGetJobsUseCase()
 
 	// Grouping API v1 routes
 	apiV1 := app.Group("/api/v1")
 	{
-		// User management routes
-		users := apiV1.Group("/users")
-		{
-			users.POST("", handlers.RegisterHandler(registerUseCase))
-		}
-
-		// Admin dashboard routes
-		adminDashboard := apiV1.Group("/admin-dashboard")
-		{
-			adminDashboard.Use(middlewares.Authorize(string((enums.ROLE_ADMIN))))
-
-			adminDashboard.POST(
-				"/clients/verify",
-				handlers.VerifyClientHandler(verifyClientUseCase))
-
-			adminDashboard.POST(
-				"/talents/verify",
-				handlers.VerifyTalentHandler(verifyTalentUseCase))
-
-		}
-
-		// Jobs routes
-		jobs := apiV1.Group("/jobs")
-		{
-			jobs.POST(
-				"",
-				middlewares.Authorize(string(enums.ROLE_CLIENT)),
-				handlers.CreateJobHandler(createJobUseCase),
-			)
-
-			jobs.GET(
-				"",
-				middlewares.Authorize(
-					string(enums.ROLE_ADMIN),
-					string(enums.ROLE_CLIENT),
-					string(enums.ROLE_TALENT)),
-				handlers.GetJobsHandler(getJobsUseCase),
-			)
-		}
+		RegisterUserManagementRoutes(apiV1)
+		RegisterAdminRoutes(apiV1)
+		RegisterJobRoutes(apiV1)
 	}
 
 	// Homepage route
@@ -71,4 +29,60 @@ func InitRoutes(app *gin.Engine) {
 // homePage handles the root route
 func homePage(c *gin.Context) {
 	c.String(200, "Welcome to Freelance Bangladesh API v1.0!")
+}
+
+func RegisterUserManagementRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
+	identityManager := identity.NewIdentityManager()
+	registerUseCase := usermgmtuc.NewRegisterUseCase(identityManager)
+
+	users := rg.Group("/users")
+	{
+		users.POST("", handlers.RegisterHandler(registerUseCase))
+	}
+
+	return users
+}
+
+func RegisterAdminRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
+	verifyClientUseCase := admindashboarduc.NewVerifyClientUseCase()
+	verifyTalentUseCase := admindashboarduc.NewVerifyTalentUseCase()
+
+	adminRoutes := rg.Group("/admin-dashboard")
+	{
+		adminRoutes.Use(middlewares.Authorize(string((enums.ROLE_ADMIN))))
+
+		adminRoutes.POST("/clients/verify",
+			handlers.VerifyClientHandler(verifyClientUseCase))
+
+		adminRoutes.POST("/talents/verify",
+			handlers.VerifyTalentHandler(verifyTalentUseCase))
+
+	}
+
+	return adminRoutes
+}
+
+func RegisterJobRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
+	createJobUseCase := jobsuc.NewCreateJobUseCase()
+	getJobsUseCase := jobsuc.NewGetJobsUseCase()
+
+	jobs := rg.Group("/jobs")
+	{
+		jobs.POST(
+			"",
+			middlewares.Authorize(string(enums.ROLE_CLIENT)),
+			handlers.CreateJobHandler(createJobUseCase),
+		)
+
+		jobs.GET(
+			"",
+			middlewares.Authorize(
+				string(enums.ROLE_ADMIN),
+				string(enums.ROLE_CLIENT),
+				string(enums.ROLE_TALENT)),
+			handlers.GetJobsHandler(getJobsUseCase),
+		)
+	}
+
+	return jobs
 }
