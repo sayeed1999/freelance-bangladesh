@@ -5,9 +5,6 @@ export default function Home() {
         <h1 className="text-4xl">Freelance Bangladesh</h1>
         <h3 className="text-xl">Welcome to freelance bangladesh!</h3>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <p>Copyright - Md. Sayeed Rahman @ {new Date().getFullYear()}</p>
-      </footer>
     </div>
   );
 }
