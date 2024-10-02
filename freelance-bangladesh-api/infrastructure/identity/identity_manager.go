@@ -79,34 +79,8 @@ func (im *identityManager) CreateUser(
 		return nil, errors.Wrap(err, "unable to add a realm role to user")
 	}
 
-	db := database.DB.Db
-
-	// Sync keycloak user (client) to our database!!
-	if role == string(enums.ROLE_CLIENT) {
-		client := &entities.Client{
-			KeycloakUserID: parsedUUID,
-			Email:          *user.Email,
-			Name:           *user.FirstName + " " + *user.LastName,
-			Phone:          phone,
-			IsVerified:     false, // an admin need to verify a talent
-		}
-		if err := db.Create(&client).Error; err != nil {
-			return nil, fmt.Errorf("failed to sync client account with auth provider: %s", err.Error())
-		}
-	}
-
-	// Sync keycloak user (talent) to our database!!
-	if role == string(enums.ROLE_TALENT) {
-		talent := &entities.Talent{
-			KeycloakUserID: parsedUUID,
-			Email:          *user.Email,
-			Name:           *user.FirstName + " " + *user.LastName,
-			Phone:          phone,
-			IsVerified:     false, // an admin need to verify a talent
-		}
-		if err := db.Create(&talent).Error; err != nil {
-			return nil, fmt.Errorf("failed to sync talent account with auth provider: %s", err.Error())
-		}
+	if err = syncUserToDatabase(role, parsedUUID, user, phone); err != nil {
+		return nil, err
 	}
 
 	userKeycloak, err := client.GetUserByID(ctx, token.AccessToken, im.realm, userId)
@@ -115,4 +89,38 @@ func (im *identityManager) CreateUser(
 	}
 
 	return userKeycloak, nil
+}
+
+func syncUserToDatabase(role string, keycloakUserID uuid.UUID, user gocloak.User, phone string) error {
+	db := database.DB.Db
+
+	// Sync keycloak user (client) to our database!!
+	if role == string(enums.ROLE_CLIENT) {
+		client := &entities.Client{
+			KeycloakUserID: keycloakUserID,
+			Email:          *user.Email,
+			Name:           *user.FirstName + " " + *user.LastName,
+			Phone:          phone,
+			IsVerified:     false, // an admin need to verify a talent
+		}
+		if err := db.Create(&client).Error; err != nil {
+			return fmt.Errorf("failed to sync client account with auth provider: %s", err.Error())
+		}
+	}
+
+	// Sync keycloak user (talent) to our database!!
+	if role == string(enums.ROLE_TALENT) {
+		talent := &entities.Talent{
+			KeycloakUserID: keycloakUserID,
+			Email:          *user.Email,
+			Name:           *user.FirstName + " " + *user.LastName,
+			Phone:          phone,
+			IsVerified:     false, // an admin need to verify a talent
+		}
+		if err := db.Create(&talent).Error; err != nil {
+			return fmt.Errorf("failed to sync talent account with auth provider: %s", err.Error())
+		}
+	}
+
+	return nil
 }
