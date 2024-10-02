@@ -10,6 +10,7 @@ import (
 	"github.com/sayeed1999/freelance-bangladesh/database"
 	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
 	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
+	"gorm.io/gorm"
 )
 
 type getJobsUseCase struct{}
@@ -23,6 +24,20 @@ func (uc *getJobsUseCase) GetJobs(ctx context.Context, claims middlewares.Claims
 
 	jobs := []entities.Job{}
 
+	db, err := uc.applyRoleBasedJobFiltering(db, claims)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get users: %v", err.Error())
+	}
+
+	err = db.Find(&jobs).Error
+	if err != nil {
+		return nil, fmt.Errorf("failed to get users: %v", err.Error())
+	}
+
+	return jobs, nil
+}
+
+func (uc *getJobsUseCase) applyRoleBasedJobFiltering(db *gorm.DB, claims middlewares.Claims) (*gorm.DB, error) {
 	switch {
 	case slices.Contains(claims.RealmAccess.Roles, string(enums.ROLE_ADMIN)):
 		// No filtering needed.
@@ -46,9 +61,5 @@ func (uc *getJobsUseCase) GetJobs(ctx context.Context, claims middlewares.Claims
 		return nil, errors.New("unauthorized: invalid role")
 	}
 
-	if err := db.Find(&jobs).Error; err != nil {
-		return nil, fmt.Errorf("failed to get users: %v", err.Error())
-	}
-
-	return jobs, nil
+	return db, nil
 }

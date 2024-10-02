@@ -101,7 +101,7 @@ func syncUserToDatabase(role string, keycloakUserID uuid.UUID, user gocloak.User
 			Email:          *user.Email,
 			Name:           *user.FirstName + " " + *user.LastName,
 			Phone:          phone,
-			IsVerified:     false, // an admin need to verify a talent
+			IsVerified:     false, // an admin need to verify a client
 		}
 		if err := db.Create(&client).Error; err != nil {
 			return fmt.Errorf("failed to sync client account with auth provider: %s", err.Error())
