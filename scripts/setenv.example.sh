@@ -15,6 +15,6 @@ export API_KEYCLOAK_RESTAPI_CLIENTSECRET=
 
 export API_DATABASE_HOST=127.0.0.1
 export API_DATABASE_PORT=5433
-export API_DATABASE_USER=
+export API_DATABASE_USER=admin@freelance-bangladesh.com
 export API_DATABASE_PASSWORD=
 export API_DATABASE_NAME=freelance-db
