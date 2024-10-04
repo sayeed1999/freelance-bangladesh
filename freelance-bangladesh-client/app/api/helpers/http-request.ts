@@ -10,14 +10,19 @@ export async function makeHttpRequest(
     headers = {}
 ) {
   try {
-    const resp = await fetch(url, {
+    const request: any = {
       headers: {
         "Content-Type": "application/json",
         ...headers,
       },
       method,
-      body: JSON.stringify(body),
-    });
+    };
+
+    if (method !== "GET") {
+      request.body = JSON.stringify(body);
+    }
+
+    const resp = await fetch(url, request);
 
     // If the response is not OK, throw an error with the status and error message
     if (!resp.ok) {

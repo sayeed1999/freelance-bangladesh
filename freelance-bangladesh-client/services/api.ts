@@ -9,14 +9,17 @@ export const callApi = async ({
   body?: any,
   accessToken?: string
 }) => {
-    const request = {
+    const request: any = {
       method,
       headers: {
         "Content-Type": "application/json",
         "Authorization": accessToken ? `Bearer ${accessToken}` : "",
       },
-      body: JSON.stringify(body),
     };
+
+    if (method !== "GET") {
+      request.body = JSON.stringify(body)
+    }
 
     const resp = await fetch(url, request);
   

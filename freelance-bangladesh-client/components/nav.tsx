@@ -27,6 +27,14 @@ const navItems = [
     path: "/signup/talent",
   },
   {
+    name: "Client List",
+    path: "/admin-dashboard/clients",
+  },
+  {
+    name: "Talent List",
+    path: "/admin-dashboard/talents",
+  },
+  {
     name: "Home",
     path: "/",
   },

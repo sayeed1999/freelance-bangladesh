@@ -7,8 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
+	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
 	admindashboarduc "github.com/sayeed1999/freelance-bangladesh/use_cases/admin_dashboard_uc"
 )
+
+type GetClientsUseCase interface {
+	Handler(ctx context.Context) ([]entities.Client, error)
+}
+
+type GetTalentsUseCase interface {
+	Handler(ctx context.Context) ([]entities.Talent, error)
+}
 
 type VerifyClientUseCase interface {
 	Handler(ctx context.Context, claims middlewares.Claims, command admindashboarduc.VerifyClientCommand) error
@@ -16,6 +25,38 @@ type VerifyClientUseCase interface {
 
 type VerifyTalentUseCase interface {
 	Handler(ctx context.Context, claims middlewares.Claims, command admindashboarduc.VerifyTalentCommand) error
+}
+
+func GetClientsHandler(useCase GetClientsUseCase) gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		clients, err := useCase.Handler(c.Request.Context())
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"total":  len(clients),
+			"result": clients,
+		})
+	}
+}
+
+func GetTalentsHandler(useCase GetTalentsUseCase) gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		talents, err := useCase.Handler(c.Request.Context())
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"total":  len(talents),
+			"result": talents,
+		})
+	}
 }
 
 func VerifyClientHandler(usecase VerifyClientUseCase) gin.HandlerFunc {

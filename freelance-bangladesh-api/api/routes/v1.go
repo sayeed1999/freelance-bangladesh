@@ -37,6 +37,7 @@ func RegisterUserManagementRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 
 	users := rg.Group("/users")
 	{
+		// N.B: client sigup considered admin route!
 		users.POST("/client-signup",
 			middlewares.Authorize(string(enums.ROLE_ADMIN)),
 			handlers.RegisterClientHandler(registerUseCase))
@@ -49,12 +50,20 @@ func RegisterUserManagementRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 }
 
 func RegisterAdminRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
+	getClientsUseCase := admindashboarduc.NewGetClientsUseCase()
+	getTalentsUseCase := admindashboarduc.NewGetTalentsUseCase()
 	verifyClientUseCase := admindashboarduc.NewVerifyClientUseCase()
 	verifyTalentUseCase := admindashboarduc.NewVerifyTalentUseCase()
 
 	adminRoutes := rg.Group("/admin-dashboard")
 	{
 		adminRoutes.Use(middlewares.Authorize(string((enums.ROLE_ADMIN))))
+
+		adminRoutes.GET("/clients",
+			handlers.GetClientsHandler(getClientsUseCase))
+
+		adminRoutes.GET("/talents",
+			handlers.GetTalentsHandler(getTalentsUseCase))
 
 		adminRoutes.POST("/clients/verify",
 			handlers.VerifyClientHandler(verifyClientUseCase))
