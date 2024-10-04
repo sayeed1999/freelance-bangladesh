@@ -1,4 +1,4 @@
-import { Talent } from "@/models/user";
+import { Client, Talent } from "@/models/user";
 
 export const mockTalents: Talent[] = [
     {
@@ -15,4 +15,21 @@ export const mockTalents: Talent[] = [
       Phone: "+880888888888",
       IsVerified: true,
     },
+];
+
+export const mockClients: Client[] = [
+  {
+    ID: "",
+    Name: "Dummy Client 1",
+    Email: "dummyuserOne@client.com",
+    Phone: "+880123456789",
+    IsVerified: false,
+  },
+  {
+    ID: "",
+    Name: "Dummy Client 2",
+    Email: "dummyuserTwo@client.com",
+    Phone: "+880888888888",
+    IsVerified: true,
+  },
 ];
