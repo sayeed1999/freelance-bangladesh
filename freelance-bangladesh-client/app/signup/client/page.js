@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { signupUser } from "@/services/userService";
+import { signupClient } from "@/services/userService";
 import Form from "@/components/form";
-import { useCanActivePublicComponent } from "@/utils/authorizeHelper";
+import { useCanActivateAdmin } from "@/utils/authorizeHelper";
 
 export default function SignupClientPage() {
-  useCanActivePublicComponent(); // public route guard
+  useCanActivateAdmin(); // admin only guard
 
   const emailRef = React.useRef();
   const firstnameRef = React.useRef();
@@ -20,7 +20,7 @@ export default function SignupClientPage() {
       return alert("Password & confirm password doesn't match!")
     }
 
-    signupUser({
+    signupClient({
       Email: emailRef.current.value,
       FirstName: firstnameRef.current.value,
       LastName: lastnameRef.current.value,

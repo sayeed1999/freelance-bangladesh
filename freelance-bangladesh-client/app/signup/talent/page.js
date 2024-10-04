@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { signupUser } from "@/services/userService";
+import { signupTalent } from "@/services/userService";
 import Form from "@/components/form";
 import { useCanActivePublicComponent } from "@/utils/authorizeHelper";
 
@@ -20,7 +20,7 @@ export default function SignupTalentPage() {
       return alert("Password & confirm password doesn't match!")
     }
 
-    signupUser({
+    signupTalent({
       Email: emailRef.current.value,
       FirstName: firstnameRef.current.value,
       LastName: lastnameRef.current.value,

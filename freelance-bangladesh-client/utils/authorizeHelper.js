@@ -15,6 +15,26 @@ const useCanActivePublicRoute = () => {
   }, [session, status, router]);
 }
 
+const useCanActivateAdmin = () => {
+  const { data: session, status } = useSession(authOptions);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      status == "unauthenticated" ||
+      (status == "authenticated" && 
+      !session.roles?.includes("admin"))
+    ) {
+      router.push("/unauthorized");
+      router.refresh();
+    }
+  }, [session, status, router]);
+
+  return {
+    status
+  }
+}
+
 const useCanActivateClient = () => {
   const { data: session, status } = useSession(authOptions);
   const router = useRouter();
@@ -53,6 +73,7 @@ const useCanActivateTalent = () => {
 
 export {
   useCanActivePublicRoute as useCanActivePublicComponent,
+  useCanActivateAdmin,
   useCanActivateClient,
   useCanActivateTalent,
 };

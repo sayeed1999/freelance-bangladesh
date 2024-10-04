@@ -55,6 +55,13 @@ func (uc *registerUseCase) Register(ctx context.Context, request RegisterRequest
 		RealmRoles:    &[]string{request.Role},
 	}
 
+	// checking should the email be verified for this user
+	if request.Role == "client" {
+		user.EmailVerified = gocloak.BoolP(true)
+	} else if request.Role == "talent" {
+		user.EmailVerified = gocloak.BoolP(false)
+	}
+
 	var roleNameLowerCase = strings.ToLower(request.Role)
 	switch roleNameLowerCase {
 	case string(enums.ROLE_CLIENT):

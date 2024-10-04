@@ -37,7 +37,12 @@ func RegisterUserManagementRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 
 	users := rg.Group("/users")
 	{
-		users.POST("", handlers.RegisterHandler(registerUseCase))
+		users.POST("/client-signup",
+			middlewares.Authorize(string(enums.ROLE_ADMIN)),
+			handlers.RegisterClientHandler(registerUseCase))
+
+		users.POST("/talent-signup",
+			handlers.RegisterTalentHandler(registerUseCase))
 	}
 
 	return users
