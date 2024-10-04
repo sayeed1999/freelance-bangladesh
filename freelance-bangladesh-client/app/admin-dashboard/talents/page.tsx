@@ -1,25 +1,15 @@
 "use client";
+import { mockTalents } from "@/mock_data/mockUsers";
+import { Talent } from "@/models/user";
 import { getTalents } from "@/services/adminService";
 import { useCanActivateAdmin } from "@/utils/authorizeHelper";
 import React, { useEffect, useState } from "react";
-
-interface User {
-  ID: string;
-  Email: string;
-  Phone?: string;
-  IsVerified: boolean;
-  Name: string;
-}
-
-const usersData: User[] = [
-  { ID: "", Name: "John Doe", Email: "example@talent.com", IsVerified: false },
-];
 
 const TalentEditModal = ({
   selectedUser,
   handleClosePopup,
 }: {
-  selectedUser: User;
+  selectedUser: Talent;
   handleClosePopup: any;
 }) => {
   const handleToggleChange = () => {
@@ -59,10 +49,11 @@ const TalentEditModal = ({
 const TalentList: React.FC = () => {
   useCanActivateAdmin();
 
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<Talent[]>(mockTalents);
+  const [selectedUser, setSelectedUser] = useState<Talent | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  const handleUserClick = (user: User) => {
+  const handleUserClick = (user: Talent) => {
     setSelectedUser(user);
     setIsPopupOpen(true);
   };
@@ -81,18 +72,54 @@ const TalentList: React.FC = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">User List</h1>
-      <ul>
-        {usersData.map((user) => (
-          <li key={user.ID} className="mb-2">
-            <button
-              onClick={() => handleUserClick(user)}
-              className="text-blue-600 hover:underline"
-            >
-              {user.Name}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto bg-white border border-gray-200 rounded-md">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                #
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                Name
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                Email
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                Phone
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user, index) => (
+              <tr
+                key={user.ID}
+                className="border-t hover:bg-gray-100 transition duration-200"
+              >
+                <td className="px-4 py-2 text-sm text-gray-700">{index + 1}</td>
+                <td className="px-4 py-2 text-sm text-gray-700">{user.Name}</td>
+                <td className="px-4 py-2 text-sm text-gray-700">
+                  {user.Email}
+                </td>
+                <td className="px-4 py-2 text-sm text-gray-700">
+                  {user.Phone}
+                </td>
+                <td className="px-4 py-2">
+                  <button
+                    onClick={() => handleUserClick(user)}
+                    className="text-blue-600 hover:underline"
+                  >
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {isPopupOpen && selectedUser && (
         <TalentEditModal
