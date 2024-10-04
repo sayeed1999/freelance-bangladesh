@@ -1,9 +1,9 @@
 "use client";
+import React, { useEffect, useState, useRef } from "react";
 import { mockTalents } from "@/mock_data/mockUsers";
 import { Talent } from "@/models/user";
-import { getTalents } from "@/services/adminService";
+import { getTalents, updateTalent } from "@/services/adminService";
 import { useCanActivateAdmin } from "@/utils/authorizeHelper";
-import React, { useEffect, useState } from "react";
 
 const TalentEditModal = ({
   selectedUser,
@@ -12,8 +12,20 @@ const TalentEditModal = ({
   selectedUser: Talent;
   handleClosePopup: any;
 }) => {
-  const handleToggleChange = () => {
-    // TODO: call api
+  const [isVerified, setIsVerified] = useState(selectedUser.IsVerified);
+
+  const handleSave = () => {
+    updateTalent({
+      TalentID: selectedUser.ID,
+      IsVerified: isVerified,
+    })
+      .then(() => {
+        alert("success!");
+        handleClosePopup();
+      })
+      .catch((err) => {
+        alert(err.message ?? "Some unexpected error has occurred.");
+      });
   };
 
   return (
@@ -24,22 +36,28 @@ const TalentEditModal = ({
           <label className="mr-2">Is Verified:</label>
           <div
             className={`relative inline-block w-12 h-6 cursor-pointer ${
-              selectedUser.IsVerified ? "bg-green-500" : "bg-gray-300"
+              isVerified ? "bg-green-500" : "bg-gray-300"
             } rounded-full transition-colors`}
-            onClick={handleToggleChange}
+            onClick={() => setIsVerified(!isVerified)}
           >
             <span
               className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform transform ${
-                selectedUser.IsVerified ? "translate-x-6" : ""
+                isVerified ? "translate-x-6" : ""
               }`}
             />
           </div>
         </div>
         <button
-          onClick={handleClosePopup}
+          onClick={handleSave}
           className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
         >
-          Close
+          Save
+        </button>
+        <button
+          onClick={handleClosePopup}
+          className="ml-2 mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+        >
+          Cancel
         </button>
       </div>
     </div>
@@ -64,9 +82,15 @@ const TalentList: React.FC = () => {
   };
 
   useEffect(() => {
-    getTalents().then((res) => {
-      console.log(res);
-    });
+    getTalents()
+      .then((res) => {
+        if (res?.result) {
+          setUsers(res.result);
+        }
+      })
+      .catch((err) => {
+        alert(err.message ?? "Some unexpected error has occurred.");
+      });
   }, []);
 
   return (

@@ -10,16 +10,16 @@ export const getTalents = () =>
     url: `/api/admin-dashboard/talents`
   });
 
-export const verifyClient = (body: any) => 
+export const updateClient = (body: any) => 
   callApi({
-    url: `/api/admin-dashboard/clients/verify`,
+    url: `/api/admin-dashboard/clients`,
     method: "POST",
     body 
   });
 
-export const verifyTalent = (body: any) => 
+export const updateTalent = (body: any) => 
   callApi({
-    url: `/api/admin-dashboard/talents/verify`,
+    url: `/api/admin-dashboard/talents`,
     method: "POST",
     body 
   });

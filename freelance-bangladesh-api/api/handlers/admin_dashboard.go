@@ -19,12 +19,12 @@ type GetTalentsUseCase interface {
 	Handler(ctx context.Context) ([]entities.Talent, error)
 }
 
-type VerifyClientUseCase interface {
-	Handler(ctx context.Context, claims middlewares.Claims, command admindashboarduc.VerifyClientCommand) error
+type UpdateClientUseCase interface {
+	Handler(ctx context.Context, claims middlewares.Claims, command admindashboarduc.UpdateClientCommand) error
 }
 
-type VerifyTalentUseCase interface {
-	Handler(ctx context.Context, claims middlewares.Claims, command admindashboarduc.VerifyTalentCommand) error
+type UpdateTalentUseCase interface {
+	Handler(ctx context.Context, claims middlewares.Claims, command admindashboarduc.UpdateTalentCommand) error
 }
 
 func GetClientsHandler(useCase GetClientsUseCase) gin.HandlerFunc {
@@ -59,7 +59,7 @@ func GetTalentsHandler(useCase GetTalentsUseCase) gin.HandlerFunc {
 	}
 }
 
-func VerifyClientHandler(usecase VerifyClientUseCase) gin.HandlerFunc {
+func UpdateClientHandler(usecase UpdateClientUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		claims, exists := c.Get("userClaims")
 		if !exists {
@@ -72,7 +72,7 @@ func VerifyClientHandler(usecase VerifyClientUseCase) gin.HandlerFunc {
 			return
 		}
 
-		var command admindashboarduc.VerifyClientCommand
+		var command admindashboarduc.UpdateClientCommand
 
 		if err := c.ShouldBindJSON(&command); err != nil {
 			c.JSON(400, gin.H{"error": errors.Wrap(err, "unable to parse incoming request").Error()})
@@ -89,7 +89,7 @@ func VerifyClientHandler(usecase VerifyClientUseCase) gin.HandlerFunc {
 	}
 }
 
-func VerifyTalentHandler(usecase VerifyTalentUseCase) gin.HandlerFunc {
+func UpdateTalentHandler(usecase UpdateTalentUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		claims, exists := c.Get("userClaims")
 		if !exists {
@@ -102,7 +102,7 @@ func VerifyTalentHandler(usecase VerifyTalentUseCase) gin.HandlerFunc {
 			return
 		}
 
-		var command admindashboarduc.VerifyTalentCommand
+		var command admindashboarduc.UpdateTalentCommand
 
 		if err := c.ShouldBindJSON(&command); err != nil {
 			c.JSON(400, gin.H{"error": errors.Wrap(err, "unable to parse incoming request").Error()})

@@ -5,28 +5,30 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator"
-	"github.com/google/uuid"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/database"
 	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
 )
 
-type verifyTalentUseCase struct{}
+type updateTalentUseCase struct{}
 
-func NewVerifyTalentUseCase() *verifyTalentUseCase {
-	return &verifyTalentUseCase{}
+func NewUpdateTalentUseCase() *updateTalentUseCase {
+	return &updateTalentUseCase{}
 }
 
-type VerifyTalentCommand struct {
-	TalentID uuid.UUID `validate:"required,uuid"`
+type UpdateTalentCommand struct {
+	TalentID   string `validate:"required,max=36"`
+	IsVerified *bool  // Pointer will be null if not provided by user
 }
 
-func (uc *verifyTalentUseCase) Handler(ctx context.Context, claims middlewares.Claims, command VerifyTalentCommand) error {
+func (uc *updateTalentUseCase) Handler(ctx context.Context, claims middlewares.Claims, command UpdateTalentCommand) error {
 	db := database.DB.Db
 
 	var validate = validator.New()
 	err := validate.Struct(command)
 	if err != nil {
+		fmt.Println(err)
+
 		return fmt.Errorf("failed to validate command: %v", err)
 	}
 
@@ -36,8 +38,10 @@ func (uc *verifyTalentUseCase) Handler(ctx context.Context, claims middlewares.C
 		return fmt.Errorf("failed to find talent: %v", err)
 	}
 
-	// Update the prop
-	talent.IsVerified = true
+	// PATCH updates
+	if command.IsVerified != nil {
+		talent.IsVerified = *command.IsVerified
+	}
 
 	if err = db.Save(talent).Error; err != nil {
 		return fmt.Errorf("failed to update talent entity: %v", err)

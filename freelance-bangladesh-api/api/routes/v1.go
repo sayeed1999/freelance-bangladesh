@@ -52,8 +52,8 @@ func RegisterUserManagementRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 func RegisterAdminRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 	getClientsUseCase := admindashboarduc.NewGetClientsUseCase()
 	getTalentsUseCase := admindashboarduc.NewGetTalentsUseCase()
-	verifyClientUseCase := admindashboarduc.NewVerifyClientUseCase()
-	verifyTalentUseCase := admindashboarduc.NewVerifyTalentUseCase()
+	updateClientUseCase := admindashboarduc.NewUpdateClientUseCase()
+	updateTalentUseCase := admindashboarduc.NewUpdateTalentUseCase()
 
 	adminRoutes := rg.Group("/admin-dashboard")
 	{
@@ -65,11 +65,11 @@ func RegisterAdminRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 		adminRoutes.GET("/talents",
 			handlers.GetTalentsHandler(getTalentsUseCase))
 
-		adminRoutes.POST("/clients/verify",
-			handlers.VerifyClientHandler(verifyClientUseCase))
+		adminRoutes.POST("/clients",
+			handlers.UpdateClientHandler(updateClientUseCase))
 
-		adminRoutes.POST("/talents/verify",
-			handlers.VerifyTalentHandler(verifyTalentUseCase))
+		adminRoutes.POST("/talents",
+			handlers.UpdateTalentHandler(updateTalentUseCase))
 
 	}
 

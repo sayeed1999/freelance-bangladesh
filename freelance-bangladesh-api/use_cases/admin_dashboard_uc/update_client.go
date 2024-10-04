@@ -11,17 +11,18 @@ import (
 	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
 )
 
-type verifyClientUseCase struct{}
+type updateClientUseCase struct{}
 
-func NewVerifyClientUseCase() *verifyClientUseCase {
-	return &verifyClientUseCase{}
+func NewUpdateClientUseCase() *updateClientUseCase {
+	return &updateClientUseCase{}
 }
 
-type VerifyClientCommand struct {
-	ClientID uuid.UUID `validate:"required,uuid"`
+type UpdateClientCommand struct {
+	ClientID   uuid.UUID `validate:"required,uuid"`
+	IsVerified *bool     // Pointer will be null if not provided by user
 }
 
-func (uc *verifyClientUseCase) Handler(ctx context.Context, claims middlewares.Claims, command VerifyClientCommand) error {
+func (uc *updateClientUseCase) Handler(ctx context.Context, claims middlewares.Claims, command UpdateClientCommand) error {
 	db := database.DB.Db
 
 	var validate = validator.New()
@@ -36,8 +37,10 @@ func (uc *verifyClientUseCase) Handler(ctx context.Context, claims middlewares.C
 		return fmt.Errorf("failed to find client: %v", err)
 	}
 
-	// Update the prop
-	client.IsVerified = true
+	// PATCH updates
+	if command.IsVerified != nil {
+		client.IsVerified = *command.IsVerified
+	}
 
 	if err = db.Save(client).Error; err != nil {
 		return fmt.Errorf("failed to update client entity: %v", err)
