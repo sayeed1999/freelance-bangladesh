@@ -2,11 +2,11 @@ package usermgmtuc
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/go-playground/validator/v10"
-	"github.com/pkg/errors"
 	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
 )
 
@@ -40,9 +40,9 @@ func (uc *registerUseCase) Register(ctx context.Context, request RegisterRequest
 		return nil, err
 	}
 
-	// Force role = 'talent' if user doesn't specify role!
-	if request.Role == "" {
-		request.Role = string(enums.ROLE_TALENT)
+	roleName, err := uc.isRoleAllowedToSignup(request.Role)
+	if err != nil {
+		return nil, err
 	}
 
 	var user = gocloak.User{
@@ -52,31 +52,42 @@ func (uc *registerUseCase) Register(ctx context.Context, request RegisterRequest
 		LastName:      gocloak.StringP(request.LastName),
 		EmailVerified: gocloak.BoolP(false),
 		Enabled:       gocloak.BoolP(true),
-		RealmRoles:    &[]string{request.Role},
+		RealmRoles:    &[]string{roleName},
 	}
 
 	// checking should the email be verified for this user
-	if request.Role == "client" {
+	if roleName == "client" {
 		user.EmailVerified = gocloak.BoolP(true)
-	} else if request.Role == "talent" {
+	} else if roleName == "talent" {
 		user.EmailVerified = gocloak.BoolP(false)
 	}
 
-	var roleNameLowerCase = strings.ToLower(request.Role)
-	switch roleNameLowerCase {
-	case string(enums.ROLE_CLIENT):
-	case string(enums.ROLE_TALENT):
-		break
-	default:
-		return nil, errors.Wrap(err, "unable to signup user other than client or talent")
-	}
-
 	userResponse, err := uc.identityManager.CreateUser(
-		ctx, user, request.Password, roleNameLowerCase, request.MobileNumber)
+		ctx, user, request.Password, roleName, request.MobileNumber)
 	if err != nil {
 		return nil, err
 	}
 
 	var response = &RegisterResponse{User: userResponse}
 	return response, nil
+}
+
+func (uc *registerUseCase) isRoleAllowedToSignup(role string) (string, error) {
+	roleNameLowerCase := strings.ToLower(role)
+	err := ""
+
+	switch roleNameLowerCase {
+	case "": // force role = 'talent' if user doesn't specify role
+		roleNameLowerCase = string(enums.ROLE_TALENT)
+	case string(enums.ROLE_CLIENT):
+	case string(enums.ROLE_TALENT):
+		break
+	default:
+		err = "unable to signup user other than client or talent"
+	}
+
+	if len(err) > 0 {
+		return "", fmt.Errorf(err)
+	}
+	return roleNameLowerCase, nil
 }
