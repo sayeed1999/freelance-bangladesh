@@ -1,3 +1,5 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { ReactNode } from "react";
 
@@ -21,18 +23,22 @@ const navItems = [
   {
     name: "Client Signup",
     path: "/signup/client",
+    requireRole: "admin",
   },
   {
     name: "Talent Signup",
     path: "/signup/talent",
+    publicRoute: true,
   },
   {
     name: "Client List",
     path: "/admin-dashboard/clients",
+    requireRole: "admin",
   },
   {
     name: "Talent List",
     path: "/admin-dashboard/talents",
+    requireRole: "admin",
   },
   {
     name: "Home",
@@ -45,17 +51,26 @@ const navItems = [
   {
     name: "Create Job",
     path: "/jobs/create",
+    requireRole: "client",
   },
 ];
 
-export default function Nav() {
+export default async function Nav() {
+  const session = await getServerSession(authOptions);
+
   return (
     <ul className="mt-3">
-      {navItems.map((item, index) => (
-        <li key={index} className="my-2">
-          <NavLink href={item.path}>{item.name}</NavLink>
-        </li>
-      ))}
+      {navItems
+        .filter((item) => {
+          if (item.publicRoute) return !session; // skip public routes for logged in state
+          if (session && !item.requireRole) return true;
+          return session?.roles?.includes(item.requireRole);
+        })
+        .map((item, index) => (
+          <li key={index} className="my-2">
+            <NavLink href={item.path}>{item.name}</NavLink>
+          </li>
+        ))}
     </ul>
   );
 }
