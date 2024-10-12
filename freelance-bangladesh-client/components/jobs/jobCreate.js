@@ -16,6 +16,10 @@ const JobCreate = () => {
         budget: parseFloat(budgetRef.current.value),
         deadline: deadlineRef.current.value ? new Date(deadlineRef.current.value).toISOString(): null,
       }).then(() => {
+        titleRef.current.value = null;
+        descriptionRef.current.value = null;
+        budgetRef.current.value = null;
+        deadlineRef.current.value = null;
         alert("create success!")
       }).catch((err) => {
         alert(err.message ?? "Some unexpected error has occurred.")

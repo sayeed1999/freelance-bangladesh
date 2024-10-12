@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { mockClients } from "@/mock_data/mockUsers";
 import { Client } from "@/models/user";
 import { getClients, updateClient } from "@/services/adminService";
 import { useCanActivateAdmin } from "@/utils/authorizeHelper";
@@ -67,7 +66,7 @@ const ClientEditModal = ({
 const ClientList: React.FC = () => {
   useCanActivateAdmin();
 
-  const [users, setUsers] = useState<Client[]>(mockClients);
+  const [users, setUsers] = useState<Client[]>([]);
   const [selectedUser, setSelectedUser] = useState<Client | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -85,6 +84,8 @@ const ClientList: React.FC = () => {
     getClients()
       .then((res) => {
         if (res?.result) {
+          console.log(res.result);
+          console.log(users);
           setUsers(res.result);
         }
       })

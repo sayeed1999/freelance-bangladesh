@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { mockTalents } from "@/mock_data/mockUsers";
 import { Talent } from "@/models/user";
 import { getTalents, updateTalent } from "@/services/adminService";
 import { useCanActivateAdmin } from "@/utils/authorizeHelper";
@@ -67,7 +66,7 @@ const TalentEditModal = ({
 const TalentList: React.FC = () => {
   useCanActivateAdmin();
 
-  const [users, setUsers] = useState<Talent[]>(mockTalents);
+  const [users, setUsers] = useState<Talent[]>([]);
   const [selectedUser, setSelectedUser] = useState<Talent | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
