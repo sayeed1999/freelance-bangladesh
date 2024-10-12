@@ -20,6 +20,10 @@ type GetJobsUseCase interface {
 	GetJobs(ctx context.Context, userClaims middlewares.Claims) ([]entities.Job, error)
 }
 
+type BidOnJobUseCase interface {
+	BidOnJob(ctx context.Context, claims middlewares.Claims, request jobsuc.BidRequest) (*jobsuc.BidResponse, error)
+}
+
 func CreateJobHandler(useCase CreateJobUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		claims, exists := c.Get("userClaims")
@@ -71,5 +75,46 @@ func GetJobsHandler(useCase GetJobsUseCase) gin.HandlerFunc {
 			"total":  len(Jobs),
 			"result": Jobs,
 		})
+	}
+}
+
+func BidOnJobHandler(useCase BidOnJobUseCase) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		claims, exists := c.Get("userClaims")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "no claims found"})
+			return
+		}
+
+		userClaims, ok := claims.(middlewares.Claims)
+		if !ok {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to cast claims"})
+			return
+		}
+
+		// Extract jobid from URL parameter
+		jobID := c.Param("jobid")
+		if jobID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "job id is required"})
+			return
+		}
+
+		// Bind the incoming JSON to the BidRequest struct
+		var request jobsuc.BidRequest
+		if err := c.ShouldBindJSON(&request); err != nil {
+			c.JSON(400, gin.H{"error": "unable to parse incoming request: " + err.Error()})
+			return
+		}
+
+		// set job id on request body
+		request.JobID = jobID
+
+		response, err := useCase.BidOnJob(c.Request.Context(), userClaims, request)
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(201, response)
 	}
 }

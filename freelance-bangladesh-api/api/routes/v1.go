@@ -79,6 +79,7 @@ func RegisterAdminRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 func RegisterJobRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 	createJobUseCase := jobsuc.NewCreateJobUseCase()
 	getJobsUseCase := jobsuc.NewGetJobsUseCase()
+	bidJobUseCase := jobsuc.NewBidOnJobUseCase()
 
 	jobs := rg.Group("/jobs")
 	{
@@ -95,6 +96,12 @@ func RegisterJobRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 				string(enums.ROLE_CLIENT),
 				string(enums.ROLE_TALENT)),
 			handlers.GetJobsHandler(getJobsUseCase),
+		)
+
+		jobs.POST(
+			"/:jobid/bids",
+			middlewares.Authorize(string(enums.ROLE_TALENT)),
+			handlers.BidOnJobHandler(bidJobUseCase),
 		)
 	}
 
