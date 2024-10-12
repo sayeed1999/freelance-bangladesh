@@ -26,15 +26,9 @@ type BidOnJobUseCase interface {
 
 func CreateJobHandler(useCase CreateJobUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		claims, exists := c.Get("userClaims")
-		if !exists {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "no claims found"})
-		}
-
-		userClaims, ok := claims.(middlewares.Claims)
-		if !ok {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to cast claims"})
-			return
+		userClaims, err := ExtractUserClaims(c)
+		if err != nil {
+			c.JSON(400, gin.H{"error": err.Error()})
 		}
 
 		var request jobsuc.CreateJobRequest
@@ -46,7 +40,7 @@ func CreateJobHandler(useCase CreateJobUseCase) gin.HandlerFunc {
 		}
 
 		// Create job using the use case
-		response, err := useCase.CreateJob(c.Request.Context(), userClaims, request)
+		response, err := useCase.CreateJob(c.Request.Context(), *userClaims, request)
 		if err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
@@ -80,16 +74,9 @@ func GetJobsHandler(useCase GetJobsUseCase) gin.HandlerFunc {
 
 func BidOnJobHandler(useCase BidOnJobUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		claims, exists := c.Get("userClaims")
-		if !exists {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "no claims found"})
-			return
-		}
-
-		userClaims, ok := claims.(middlewares.Claims)
-		if !ok {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to cast claims"})
-			return
+		userClaims, err := ExtractUserClaims(c)
+		if err != nil {
+			c.JSON(400, gin.H{"error": err.Error()})
 		}
 
 		// Extract jobid from URL parameter
@@ -109,7 +96,7 @@ func BidOnJobHandler(useCase BidOnJobUseCase) gin.HandlerFunc {
 		// set job id on request body
 		request.JobID = jobID
 
-		response, err := useCase.BidOnJob(c.Request.Context(), userClaims, request)
+		response, err := useCase.BidOnJob(c.Request.Context(), *userClaims, request)
 		if err != nil {
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
