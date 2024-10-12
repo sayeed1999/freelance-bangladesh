@@ -26,7 +26,7 @@ export async function makeHttpRequest(
     // If the response is not OK, throw an error with the status and error message
     if (!resp.ok) {
       const errorData = await resp.json();
-      throw new Error(`Request failed with status ${resp.status}: ${errorData.message || "Unknown error"}`);
+      throw new Error(`Request failed with status ${resp.status}: ${errorData.error || "Unknown error"}`);
     }
     if (resp.status === 204) {
       return NextResponse.json(null, { status: 200 }); // Nextjs giving error with parsing req body for status 204 which should be null or not present

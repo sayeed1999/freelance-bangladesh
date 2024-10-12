@@ -111,7 +111,7 @@ func BidOnJobHandler(useCase BidOnJobUseCase) gin.HandlerFunc {
 
 		response, err := useCase.BidOnJob(c.Request.Context(), userClaims, request)
 		if err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
+			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
 
