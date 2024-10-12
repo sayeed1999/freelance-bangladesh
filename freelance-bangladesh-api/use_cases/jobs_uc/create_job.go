@@ -44,6 +44,10 @@ func (uc *createJobUseCase) CreateJob(ctx context.Context, claims middlewares.Cl
 		return nil, fmt.Errorf("failed to get client: %v", err.Error())
 	}
 
+	if !client.IsVerified {
+		return nil, fmt.Errorf("failed to create job: client account is not verified")
+	}
+
 	var job = &entities.Job{
 		ClientID:    client.ID,
 		Title:       request.Title,
