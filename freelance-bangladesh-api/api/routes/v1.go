@@ -2,18 +2,17 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sayeed1999/freelance-bangladesh/api/handlers"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	getclients "github.com/sayeed1999/freelance-bangladesh/features/admin/getClients"
 	gettalents "github.com/sayeed1999/freelance-bangladesh/features/admin/getTalents"
 	updateclient "github.com/sayeed1999/freelance-bangladesh/features/admin/updateClient"
 	updatetalent "github.com/sayeed1999/freelance-bangladesh/features/admin/updateTalent"
+	"github.com/sayeed1999/freelance-bangladesh/features/auth"
 	bidjob "github.com/sayeed1999/freelance-bangladesh/features/jobs/bidJob"
 	createjob "github.com/sayeed1999/freelance-bangladesh/features/jobs/createJob"
 	getjobs "github.com/sayeed1999/freelance-bangladesh/features/jobs/getJobs"
 	"github.com/sayeed1999/freelance-bangladesh/infrastructure/identity"
 	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
-	"github.com/sayeed1999/freelance-bangladesh/use_cases/usermgmtuc"
 )
 
 // InitRoutes initializes all the routes
@@ -38,17 +37,17 @@ func homePage(c *gin.Context) {
 
 func RegisterUserManagementRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 	identityManager := identity.NewIdentityManager()
-	registerUseCase := usermgmtuc.NewRegisterUseCase(identityManager)
+	registerUseCase := auth.NewRegisterUseCase(identityManager)
 
 	users := rg.Group("/users")
 	{
 		// N.B: client sigup considered admin route!
 		users.POST("/client-signup",
 			middlewares.Authorize(string(enums.ROLE_ADMIN)),
-			handlers.RegisterClientHandler(registerUseCase))
+			auth.RegisterClientHandler(registerUseCase))
 
 		users.POST("/talent-signup",
-			handlers.RegisterTalentHandler(registerUseCase))
+			auth.RegisterTalentHandler(registerUseCase))
 	}
 
 	return users

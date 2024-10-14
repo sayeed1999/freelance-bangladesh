@@ -1,4 +1,4 @@
-package handlers
+package auth
 
 import (
 	"context"
@@ -6,17 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
-	"github.com/sayeed1999/freelance-bangladesh/use_cases/usermgmtuc"
 )
 
 type RegisterUseCase interface {
-	Register(context.Context, usermgmtuc.RegisterRequest) (*usermgmtuc.RegisterResponse, error)
+	Register(context.Context, RegisterRequest) (*RegisterResponse, error)
 }
 
 func RegisterClientHandler(useCase RegisterUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx = c.Request.Context()
-		var request usermgmtuc.RegisterRequest
+		var request RegisterRequest
 
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(400, gin.H{"error": errors.Wrap(err, "unable to parse incoming request").Error()})
@@ -39,7 +38,7 @@ func RegisterClientHandler(useCase RegisterUseCase) gin.HandlerFunc {
 func RegisterTalentHandler(useCase RegisterUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx = c.Request.Context()
-		var request usermgmtuc.RegisterRequest
+		var request RegisterRequest
 
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(400, gin.H{"error": errors.Wrap(err, "unable to parse incoming request").Error()})

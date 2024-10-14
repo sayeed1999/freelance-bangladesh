@@ -1,4 +1,4 @@
-package usermgmtuc
+package auth
 
 import (
 	"context"
