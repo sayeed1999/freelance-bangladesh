@@ -6,12 +6,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
-	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
+	"github.com/sayeed1999/freelance-bangladesh/models"
 	"github.com/sayeed1999/freelance-bangladesh/utils"
 )
 
 type GetJobsUseCase interface {
-	GetJobs(ctx context.Context, userClaims middlewares.Claims) ([]entities.Job, error)
+	GetJobs(ctx context.Context, userClaims middlewares.Claims) ([]models.Job, error)
 }
 
 func GetJobsHandler(useCase GetJobsUseCase) gin.HandlerFunc {

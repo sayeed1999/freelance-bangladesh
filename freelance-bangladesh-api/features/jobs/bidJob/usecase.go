@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/database"
-	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
+	"github.com/sayeed1999/freelance-bangladesh/models"
 )
 
 type BidRequest struct {
@@ -18,7 +18,7 @@ type BidRequest struct {
 }
 
 type BidResponse struct {
-	Bid *entities.Bid
+	Bid *models.Bid
 }
 
 type bidOnJobUseCase struct{}
@@ -43,7 +43,7 @@ func (uc *bidOnJobUseCase) BidOnJob(ctx context.Context, claims middlewares.Clai
 	}
 
 	// Fetch the talent by email from the claims
-	var talent entities.Talent
+	var talent models.Talent
 	if err := db.First(&talent, "Email = ?", claims.Email).Error; err != nil {
 		return nil, fmt.Errorf("failed to get talent: %v", err)
 	}
@@ -54,24 +54,24 @@ func (uc *bidOnJobUseCase) BidOnJob(ctx context.Context, claims middlewares.Clai
 	}
 
 	// Fetch the job by UUID (JobID)
-	var job entities.Job
+	var job models.Job
 	if err := db.First(&job, "id = ?", jobID).Error; err != nil {
 		return nil, fmt.Errorf("job not found: %v", err)
 	}
 
 	// Ensure the job is open for bidding
-	if job.Status != entities.ACTIVE {
+	if job.Status != models.ACTIVE {
 		return nil, fmt.Errorf("job is not open for bidding")
 	}
 
 	// Check if the talent has already placed a bid on this job
-	var existingBid entities.Bid
+	var existingBid models.Bid
 	if err := db.First(&existingBid, "job_id = ? AND talent_id = ?", jobID, talent.ID).Error; err == nil {
 		return nil, fmt.Errorf("you have already placed a bid on this job")
 	}
 
 	// Create a new bid
-	bid := &entities.Bid{
+	bid := &models.Bid{
 		JobID:    jobID,     // Use UUID for JobID
 		TalentID: talent.ID, // TalentID is also a UUID
 		Amount:   request.Amount,

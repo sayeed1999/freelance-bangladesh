@@ -7,7 +7,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/database"
-	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
+	"github.com/sayeed1999/freelance-bangladesh/models"
 )
 
 type updateTalentUseCase struct{}
@@ -32,7 +32,7 @@ func (uc *updateTalentUseCase) Handler(ctx context.Context, claims middlewares.C
 		return fmt.Errorf("failed to validate command: %v", err)
 	}
 
-	var talent entities.Talent
+	var talent models.Talent
 
 	if err = db.First(&talent, "ID = ?", command.TalentID).Error; err != nil {
 		return fmt.Errorf("failed to find talent: %v", err)

@@ -5,11 +5,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
+	"github.com/sayeed1999/freelance-bangladesh/models"
 )
 
 type GetClientsUseCase interface {
-	Handler(ctx context.Context) ([]entities.Client, error)
+	Handler(ctx context.Context) ([]models.Client, error)
 }
 
 func GetClientsHandler(useCase GetClientsUseCase) gin.HandlerFunc {

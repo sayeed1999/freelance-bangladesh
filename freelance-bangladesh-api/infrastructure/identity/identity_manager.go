@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"github.com/sayeed1999/freelance-bangladesh/database"
-	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
+	"github.com/sayeed1999/freelance-bangladesh/models"
 	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
 	"github.com/spf13/viper"
 )
@@ -96,7 +96,7 @@ func syncUserToDatabase(role string, keycloakUserID uuid.UUID, user gocloak.User
 
 	// Sync keycloak user (client) to our database!!
 	if role == string(enums.ROLE_CLIENT) {
-		client := &entities.Client{
+		client := &models.Client{
 			KeycloakUserID: keycloakUserID,
 			Email:          *user.Email,
 			Name:           *user.FirstName + " " + *user.LastName,
@@ -110,7 +110,7 @@ func syncUserToDatabase(role string, keycloakUserID uuid.UUID, user gocloak.User
 
 	// Sync keycloak user (talent) to our database!!
 	if role == string(enums.ROLE_TALENT) {
-		talent := &entities.Talent{
+		talent := &models.Talent{
 			KeycloakUserID: keycloakUserID,
 			Email:          *user.Email,
 			Name:           *user.FirstName + " " + *user.LastName,

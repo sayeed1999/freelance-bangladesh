@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/sayeed1999/freelance-bangladesh/config"
-	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
+	"github.com/sayeed1999/freelance-bangladesh/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -44,10 +44,10 @@ func Connect() {
 	log.Println("running migrations on database")
 
 	if err = db.AutoMigrate(
-		&entities.Talent{},
-		&entities.Client{},
-		&entities.Job{},
-		&entities.Bid{},
+		&models.Talent{},
+		&models.Client{},
+		&models.Job{},
+		&models.Bid{},
 	); err != nil {
 		log.Fatal(err)
 	}

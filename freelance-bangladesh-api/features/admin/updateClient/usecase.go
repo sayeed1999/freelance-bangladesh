@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/database"
-	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
+	"github.com/sayeed1999/freelance-bangladesh/models"
 )
 
 type updateClientUseCase struct{}
@@ -31,7 +31,7 @@ func (uc *updateClientUseCase) Handler(ctx context.Context, claims middlewares.C
 		return fmt.Errorf("failed to validate command: %v", err)
 	}
 
-	var client entities.Client
+	var client models.Client
 
 	if err = db.First(&client, "ID = ?", command.ClientID).Error; err != nil {
 		return fmt.Errorf("failed to find client: %v", err)

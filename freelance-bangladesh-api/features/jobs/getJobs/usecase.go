@@ -8,7 +8,7 @@ import (
 
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/database"
-	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
+	"github.com/sayeed1999/freelance-bangladesh/models"
 	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
 	"gorm.io/gorm"
 )
@@ -19,10 +19,10 @@ func NewGetJobsUseCase() *getJobsUseCase {
 	return &getJobsUseCase{}
 }
 
-func (uc *getJobsUseCase) GetJobs(ctx context.Context, claims middlewares.Claims) ([]entities.Job, error) {
+func (uc *getJobsUseCase) GetJobs(ctx context.Context, claims middlewares.Claims) ([]models.Job, error) {
 	db := database.DB.Db
 
-	jobs := []entities.Job{}
+	jobs := []models.Job{}
 
 	db, err := uc.applyRoleBasedJobFiltering(db, claims)
 	if err != nil {
@@ -45,11 +45,11 @@ func (uc *getJobsUseCase) applyRoleBasedJobFiltering(db *gorm.DB, claims middlew
 
 	case slices.Contains(claims.RealmAccess.Roles, string(enums.ROLE_TALENT)):
 		// Talent: Return all active jobs
-		db = db.Where("status = ?", entities.ACTIVE)
+		db = db.Where("status = ?", models.ACTIVE)
 
 	case slices.Contains(claims.RealmAccess.Roles, string(enums.ROLE_CLIENT)):
 		// Client: Return jobs for this client
-		var client entities.Client
+		var client models.Client
 
 		if err := db.First(&client, "Email = ?", claims.Email).Error; err != nil {
 			return nil, fmt.Errorf("failed to get client: %v", err.Error())

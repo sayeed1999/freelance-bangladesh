@@ -8,7 +8,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	"github.com/sayeed1999/freelance-bangladesh/database"
-	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
+	"github.com/sayeed1999/freelance-bangladesh/models"
 )
 
 type CreateJobRequest struct {
@@ -19,7 +19,7 @@ type CreateJobRequest struct {
 }
 
 type CreateJobResponse struct {
-	Job *entities.Job
+	Job *models.Job
 }
 
 // interface for the usecase
@@ -38,7 +38,7 @@ func (uc *createJobUseCase) CreateJob(ctx context.Context, claims middlewares.Cl
 		return nil, err
 	}
 
-	var client entities.Client
+	var client models.Client
 
 	if err := db.First(&client, "Email = ?", claims.Email).Error; err != nil {
 		return nil, fmt.Errorf("failed to get client: %v", err.Error())
@@ -48,7 +48,7 @@ func (uc *createJobUseCase) CreateJob(ctx context.Context, claims middlewares.Cl
 		return nil, fmt.Errorf("failed to create job: client account is not verified")
 	}
 
-	var job = &entities.Job{
+	var job = &models.Job{
 		ClientID:    client.ID,
 		Title:       request.Title,
 		Description: request.Description,
