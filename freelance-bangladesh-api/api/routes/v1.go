@@ -4,12 +4,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sayeed1999/freelance-bangladesh/api/handlers"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
+	getclients "github.com/sayeed1999/freelance-bangladesh/features/admin/getClients"
+	gettalents "github.com/sayeed1999/freelance-bangladesh/features/admin/getTalents"
+	updateclient "github.com/sayeed1999/freelance-bangladesh/features/admin/updateClient"
+	updatetalent "github.com/sayeed1999/freelance-bangladesh/features/admin/updateTalent"
 	bidjob "github.com/sayeed1999/freelance-bangladesh/features/jobs/bidJob"
 	createjob "github.com/sayeed1999/freelance-bangladesh/features/jobs/createJob"
 	getjobs "github.com/sayeed1999/freelance-bangladesh/features/jobs/getJobs"
 	"github.com/sayeed1999/freelance-bangladesh/infrastructure/identity"
 	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
-	admindashboarduc "github.com/sayeed1999/freelance-bangladesh/use_cases/admin_dashboard_uc"
 	"github.com/sayeed1999/freelance-bangladesh/use_cases/usermgmtuc"
 )
 
@@ -52,26 +55,26 @@ func RegisterUserManagementRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 }
 
 func RegisterAdminRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
-	getClientsUseCase := admindashboarduc.NewGetClientsUseCase()
-	getTalentsUseCase := admindashboarduc.NewGetTalentsUseCase()
-	updateClientUseCase := admindashboarduc.NewUpdateClientUseCase()
-	updateTalentUseCase := admindashboarduc.NewUpdateTalentUseCase()
+	getClientsUseCase := getclients.NewGetClientsUseCase()
+	getTalentsUseCase := gettalents.NewGetTalentsUseCase()
+	updateClientUseCase := updateclient.NewUpdateClientUseCase()
+	updateTalentUseCase := updatetalent.NewUpdateTalentUseCase()
 
 	adminRoutes := rg.Group("/admin-dashboard")
 	{
 		adminRoutes.Use(middlewares.Authorize(string((enums.ROLE_ADMIN))))
 
 		adminRoutes.GET("/clients",
-			handlers.GetClientsHandler(getClientsUseCase))
+			getclients.GetClientsHandler(getClientsUseCase))
 
 		adminRoutes.GET("/talents",
-			handlers.GetTalentsHandler(getTalentsUseCase))
+			gettalents.GetTalentsHandler(getTalentsUseCase))
 
 		adminRoutes.POST("/clients",
-			handlers.UpdateClientHandler(updateClientUseCase))
+			updateclient.UpdateClientHandler(updateClientUseCase))
 
 		adminRoutes.POST("/talents",
-			handlers.UpdateTalentHandler(updateTalentUseCase))
+			updatetalent.UpdateTalentHandler(updateTalentUseCase))
 
 	}
 

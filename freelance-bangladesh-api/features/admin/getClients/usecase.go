@@ -1,4 +1,4 @@
-package admindashboarduc
+package getclients
 
 import (
 	"context"
@@ -8,16 +8,16 @@ import (
 	"github.com/sayeed1999/freelance-bangladesh/domain/entities"
 )
 
-type getTalentsUseCase struct{}
+type getClientsUseCase struct{}
 
-func NewGetTalentsUseCase() *getTalentsUseCase {
-	return &getTalentsUseCase{}
+func NewGetClientsUseCase() *getClientsUseCase {
+	return &getClientsUseCase{}
 }
 
-func (uc *getTalentsUseCase) Handler(ctx context.Context) ([]entities.Talent, error) {
+func (uc *getClientsUseCase) Handler(ctx context.Context) ([]entities.Client, error) {
 	db := database.DB.Db
 
-	talents := []entities.Talent{}
+	talents := []entities.Client{}
 
 	if err := db.Find(&talents).Error; err != nil {
 		return nil, fmt.Errorf("failed to fetch talents: %v", err)

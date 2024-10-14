@@ -1,4 +1,4 @@
-package admindashboarduc
+package updateclient
 
 import (
 	"context"
