@@ -2,17 +2,9 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
-	getclients "github.com/sayeed1999/freelance-bangladesh/features/admin/getClients"
-	gettalents "github.com/sayeed1999/freelance-bangladesh/features/admin/getTalents"
-	updateclient "github.com/sayeed1999/freelance-bangladesh/features/admin/updateClient"
-	updatetalent "github.com/sayeed1999/freelance-bangladesh/features/admin/updateTalent"
+	"github.com/sayeed1999/freelance-bangladesh/features/admin"
 	"github.com/sayeed1999/freelance-bangladesh/features/auth"
-	bidjob "github.com/sayeed1999/freelance-bangladesh/features/jobs/bidJob"
-	createjob "github.com/sayeed1999/freelance-bangladesh/features/jobs/createJob"
-	getjobs "github.com/sayeed1999/freelance-bangladesh/features/jobs/getJobs"
-	"github.com/sayeed1999/freelance-bangladesh/infrastructure/identity"
-	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
+	"github.com/sayeed1999/freelance-bangladesh/features/jobs"
 )
 
 // InitRoutes initializes all the routes
@@ -21,9 +13,9 @@ func InitRoutes(app *gin.Engine) {
 	// Grouping API v1 routes
 	apiV1 := app.Group("/api/v1")
 	{
-		RegisterUserManagementRoutes(apiV1)
-		RegisterAdminRoutes(apiV1)
-		RegisterJobRoutes(apiV1)
+		auth.RegisterUserManagementRoutes(apiV1)
+		admin.RegisterAdminRoutes(apiV1)
+		jobs.RegisterJobRoutes(apiV1)
 	}
 
 	// Homepage route
@@ -33,81 +25,4 @@ func InitRoutes(app *gin.Engine) {
 // homePage handles the root route
 func homePage(c *gin.Context) {
 	c.String(200, "Welcome to Freelance Bangladesh API v1.0!")
-}
-
-func RegisterUserManagementRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
-	identityManager := identity.NewIdentityManager()
-	registerUseCase := auth.NewRegisterUseCase(identityManager)
-
-	users := rg.Group("/users")
-	{
-		// N.B: client sigup considered admin route!
-		users.POST("/client-signup",
-			middlewares.Authorize(string(enums.ROLE_ADMIN)),
-			auth.RegisterClientHandler(registerUseCase))
-
-		users.POST("/talent-signup",
-			auth.RegisterTalentHandler(registerUseCase))
-	}
-
-	return users
-}
-
-func RegisterAdminRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
-	getClientsUseCase := getclients.NewGetClientsUseCase()
-	getTalentsUseCase := gettalents.NewGetTalentsUseCase()
-	updateClientUseCase := updateclient.NewUpdateClientUseCase()
-	updateTalentUseCase := updatetalent.NewUpdateTalentUseCase()
-
-	adminRoutes := rg.Group("/admin-dashboard")
-	{
-		adminRoutes.Use(middlewares.Authorize(string((enums.ROLE_ADMIN))))
-
-		adminRoutes.GET("/clients",
-			getclients.GetClientsHandler(getClientsUseCase))
-
-		adminRoutes.GET("/talents",
-			gettalents.GetTalentsHandler(getTalentsUseCase))
-
-		adminRoutes.POST("/clients",
-			updateclient.UpdateClientHandler(updateClientUseCase))
-
-		adminRoutes.POST("/talents",
-			updatetalent.UpdateTalentHandler(updateTalentUseCase))
-
-	}
-
-	return adminRoutes
-}
-
-func RegisterJobRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
-	createJobUseCase := createjob.NewCreateJobUseCase()
-	getJobsUseCase := getjobs.NewGetJobsUseCase()
-	bidJobUseCase := bidjob.NewBidOnJobUseCase()
-
-	jobs := rg.Group("/jobs")
-	{
-		jobs.POST(
-			"",
-			middlewares.Authorize(string(enums.ROLE_CLIENT)),
-			createjob.CreateJobHandler(createJobUseCase),
-		)
-
-		jobs.GET(
-			"",
-			middlewares.Authorize(
-				string(enums.ROLE_ADMIN),
-				string(enums.ROLE_CLIENT),
-				string(enums.ROLE_TALENT)),
-			getjobs.GetJobsHandler(getJobsUseCase),
-		)
-
-		jobs.POST(
-			"/:jobid/bids",
-			middlewares.Authorize(string(enums.ROLE_TALENT)),
-			bidjob.BidOnJobHandler(bidJobUseCase),
-		)
-	}
-
-	return jobs
 }
