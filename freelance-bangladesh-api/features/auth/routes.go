@@ -13,6 +13,8 @@ func RegisterUserManagementRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 
 	users := rg.Group("/users")
 	{
+		users.Use(middlewares.NoStoreCache())
+
 		// N.B: client sigup considered admin route!
 		users.POST("/client-signup",
 			middlewares.Authorize(string(enums.ROLE_ADMIN)),

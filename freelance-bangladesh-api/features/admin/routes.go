@@ -21,9 +21,11 @@ func RegisterAdminRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 		adminRoutes.Use(middlewares.Authorize(string((enums.ROLE_ADMIN))))
 
 		adminRoutes.GET("/clients",
+			middlewares.PrivateCache(),
 			getclients.GetClientsHandler(getClientsUseCase))
 
 		adminRoutes.GET("/talents",
+			middlewares.PrivateCache(),
 			gettalents.GetTalentsHandler(getTalentsUseCase))
 
 		adminRoutes.POST("/clients",
