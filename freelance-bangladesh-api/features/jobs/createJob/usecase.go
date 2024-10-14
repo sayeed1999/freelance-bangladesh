@@ -1,4 +1,4 @@
-package jobsuc
+package createjob
 
 import (
 	"context"

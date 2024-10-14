@@ -4,10 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sayeed1999/freelance-bangladesh/api/handlers"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
+	bidjob "github.com/sayeed1999/freelance-bangladesh/features/jobs/bidJob"
+	createjob "github.com/sayeed1999/freelance-bangladesh/features/jobs/createJob"
+	getjobs "github.com/sayeed1999/freelance-bangladesh/features/jobs/getJobs"
 	"github.com/sayeed1999/freelance-bangladesh/infrastructure/identity"
 	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
 	admindashboarduc "github.com/sayeed1999/freelance-bangladesh/use_cases/admin_dashboard_uc"
-	jobsuc "github.com/sayeed1999/freelance-bangladesh/use_cases/jobs_uc"
 	"github.com/sayeed1999/freelance-bangladesh/use_cases/usermgmtuc"
 )
 
@@ -77,16 +79,16 @@ func RegisterAdminRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 }
 
 func RegisterJobRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
-	createJobUseCase := jobsuc.NewCreateJobUseCase()
-	getJobsUseCase := jobsuc.NewGetJobsUseCase()
-	bidJobUseCase := jobsuc.NewBidOnJobUseCase()
+	createJobUseCase := createjob.NewCreateJobUseCase()
+	getJobsUseCase := getjobs.NewGetJobsUseCase()
+	bidJobUseCase := bidjob.NewBidOnJobUseCase()
 
 	jobs := rg.Group("/jobs")
 	{
 		jobs.POST(
 			"",
 			middlewares.Authorize(string(enums.ROLE_CLIENT)),
-			handlers.CreateJobHandler(createJobUseCase),
+			createjob.CreateJobHandler(createJobUseCase),
 		)
 
 		jobs.GET(
@@ -95,13 +97,13 @@ func RegisterJobRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 				string(enums.ROLE_ADMIN),
 				string(enums.ROLE_CLIENT),
 				string(enums.ROLE_TALENT)),
-			handlers.GetJobsHandler(getJobsUseCase),
+			getjobs.GetJobsHandler(getJobsUseCase),
 		)
 
 		jobs.POST(
 			"/:jobid/bids",
 			middlewares.Authorize(string(enums.ROLE_TALENT)),
-			handlers.BidOnJobHandler(bidJobUseCase),
+			bidjob.BidOnJobHandler(bidJobUseCase),
 		)
 	}
 
