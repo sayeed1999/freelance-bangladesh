@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sayeed1999/freelance-bangladesh/api/middlewares"
 	bidjob "github.com/sayeed1999/freelance-bangladesh/features/jobs/bidJob"
+	bidlist "github.com/sayeed1999/freelance-bangladesh/features/jobs/bidList"
 	createjob "github.com/sayeed1999/freelance-bangladesh/features/jobs/createJob"
 	getjobs "github.com/sayeed1999/freelance-bangladesh/features/jobs/getJobs"
 	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
@@ -13,6 +14,7 @@ func RegisterJobRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 	createJobUseCase := createjob.NewCreateJobUseCase()
 	getJobsUseCase := getjobs.NewGetJobsUseCase()
 	bidJobUseCase := bidjob.NewBidOnJobUseCase()
+	bidListUseCase := bidlist.NewBidListUseCase()
 
 	jobs := rg.Group("/jobs")
 	{
@@ -36,6 +38,12 @@ func RegisterJobRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 			"/:jobid/bids",
 			middlewares.Authorize(string(enums.ROLE_TALENT)),
 			bidjob.BidOnJobHandler(bidJobUseCase),
+		)
+
+		jobs.GET(
+			"/:jobid/bids",
+			middlewares.Authorize(string(enums.ROLE_CLIENT)),
+			bidlist.BidListHandler(bidListUseCase),
 		)
 	}
 
