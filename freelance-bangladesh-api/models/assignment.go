@@ -13,16 +13,17 @@ type Assignment struct {
 	Talent        Talent
 	JobID         uuid.UUID
 	Job           Job
-	Budget        float32           `gorm:"not null"`
-	AssignedAt    time.Time         `gorm:"type:date"`
-	SubmittedAt   *time.Time        `gorm:"type:date"`
-	SubmissionURL *string           `gorm:"type:text"`
-	Status        *submissionStatus `gorm:"size:20"`
+	Budget        float32          `gorm:"not null"`
+	AssignedAt    time.Time        `gorm:"type:date"`
+	SubmittedAt   *time.Time       `gorm:"type:date"`
+	SubmissionURL *string          `gorm:"type:text"`
+	Status        submissionStatus `gorm:"size:20;default:'pending'"`
 }
 
 type submissionStatus string
 
 const (
+	PENDING   submissionStatus = "pending"
 	SUBMITTED submissionStatus = "submitted"
 	APPROVED  submissionStatus = "approved"
 	REJECTED  submissionStatus = "rejected"
