@@ -46,6 +46,11 @@ func (uc *assignTalentUseCase) AssignTalent(ctx context.Context, claims middlewa
 		return nil, fmt.Errorf("job not found: %v", err)
 	}
 
+	var existingBid models.Bid
+	if err := db.First(&existingBid, "job_id = ? AND talent_id = ?", parsedJobID, parsedTalentID).Error; err != nil || existingBid.ID == uuid.Nil {
+		return nil, fmt.Errorf("talent has not placed a bid on this job")
+	}
+
 	var client models.Client
 	if err := db.First(&client, "Email = ?", claims.Email).Error; err != nil {
 		return nil, fmt.Errorf("failed to get client: %v", err.Error())
