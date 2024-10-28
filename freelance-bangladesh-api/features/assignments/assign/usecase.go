@@ -83,6 +83,7 @@ func (uc *assignTalentUseCase) AssignTalent(ctx context.Context, claims middlewa
 		Budget:     request.Amount, // Assign the provided amount
 		AssignedAt: time.Now().UTC(),
 	}
+
 	if err := db.Create(&assignment).Error; err != nil {
 		return nil, fmt.Errorf("failed to create assignment: %v", err)
 	}
