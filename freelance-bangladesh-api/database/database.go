@@ -48,6 +48,8 @@ func Connect() {
 		&models.Client{},
 		&models.Job{},
 		&models.Bid{},
+		&models.Assignment{},
+		&models.Review{},
 	); err != nil {
 		log.Fatal(err)
 	}
