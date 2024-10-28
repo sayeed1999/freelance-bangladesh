@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sayeed1999/freelance-bangladesh/features/admin"
+	"github.com/sayeed1999/freelance-bangladesh/features/assignments"
 	"github.com/sayeed1999/freelance-bangladesh/features/auth"
 	"github.com/sayeed1999/freelance-bangladesh/features/jobs"
 )
@@ -16,6 +17,7 @@ func InitRoutes(app *gin.Engine) {
 		auth.RegisterUserManagementRoutes(apiV1)
 		admin.RegisterAdminRoutes(apiV1)
 		jobs.RegisterJobRoutes(apiV1)
+		assignments.RegisterAssignmentRoutes(apiV1)
 	}
 
 	// Homepage route
