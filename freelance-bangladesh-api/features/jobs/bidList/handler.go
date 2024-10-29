@@ -26,6 +26,9 @@ func BidListHandler(useCase BidListUseCase) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, bids)
+		c.JSON(http.StatusOK, gin.H{
+			"total":  len(bids),
+			"result": bids,
+		})
 	}
 }

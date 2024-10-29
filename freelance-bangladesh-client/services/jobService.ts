@@ -18,9 +18,14 @@ export const createJob = (body: any) =>
     body 
   });
 
-export const bidJob = (jobID: string, body: any) => 
+export const bidJob = (jobID: string, body: any) =>
   callApi({ 
     url: `/api/jobs/${jobID}/bids`, 
     method: "POST", 
-    body 
+    body
+  });
+
+export const getBidList = (jobID: string) => 
+  callApi({ 
+    url: `/api/jobs/${jobID}/bids`
   });

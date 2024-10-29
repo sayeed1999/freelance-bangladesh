@@ -1,10 +1,12 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import BidJob from "./bidJob";
 import { useSession } from "next-auth/react";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const JobCard = ({ job }) => {
+  const router = useRouter();
   const { data: session, status } = useSession(authOptions);
   const [isBidModalVisible, setIsBidModalVisible] = useState(false);
 
@@ -24,6 +26,15 @@ const JobCard = ({ job }) => {
       >
         Bid
       </button>}
+
+      {session?.roles?.includes("client") && (
+        <button
+            className="mt-4 bg-violet-700 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors duration-300"
+            onClick={() => router.push(`/jobs/${job.ID}/bidlist`)}
+        >
+          View Bids on this Job
+        </button>
+      )}
 
       {/* Modal */}
       {isBidModalVisible && (
