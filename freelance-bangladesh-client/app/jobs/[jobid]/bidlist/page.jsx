@@ -1,27 +1,15 @@
 'use client';
+import { assignTalent } from '@/services/assignmentService';
 import { getBidList } from '@/services/jobService';
 import { useCanActivateClient } from '@/utils/authorizeHelper';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const AssignJobModal = ({
+  handleAssign,
   selected,
   handleClosePopup,
 }) => {
-
-  const handleAssign = () => {
-    // updateTalent({
-    //   TalentID: selected.ID,
-    //   IsVerified: isVerified,
-    // })
-    //   .then(() => {
-    //     alert("success!");
-    //     handleClosePopup();
-    //   })
-    //   .catch((err) => {
-    //     alert(err.message ?? "Some unexpected error has occurred.");
-    //   });
-  };
 
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
@@ -65,6 +53,21 @@ export default function BidListPage() {
     const handleClosePopup = () => {
       setIsPopupOpen(false);
       setSelected(null);
+    };
+
+    const handleAssign = () => {
+      assignTalent({
+        job_id: jobid,
+        talent_id: selected.talent_id,
+        amount: selected.amount,
+      })
+        .then(() => {
+          alert("success!");
+          handleClosePopup();
+        })
+        .catch((err) => {
+          alert(err.message ?? "Some unexpected error has occurred.");
+        });
     };
   
     useEffect(() => {
@@ -140,6 +143,7 @@ export default function BidListPage() {
   
         {isPopupOpen && selected && (
           <AssignJobModal
+            handleAssign={handleAssign}
             selected={selected}
             handleClosePopup={handleClosePopup}
           />
