@@ -1,8 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import BidJob from "./bidJob";
+import { useSession } from "next-auth/react";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const JobCard = ({ job }) => {
+  const { data: session, status } = useSession(authOptions);
   const [isBidModalVisible, setIsBidModalVisible] = useState(false);
 
   return (
@@ -14,12 +17,13 @@ const JobCard = ({ job }) => {
         <div className="text-gray-600 mt-2">Deadline: {new Date(job.Deadline).toLocaleDateString()}</div>
       )}
 
+      {session?.roles?.includes("talent") &&
       <button
         className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-300"
         onClick={() => setIsBidModalVisible(true)}
       >
         Bid
-      </button>
+      </button>}
 
       {/* Modal */}
       {isBidModalVisible && (

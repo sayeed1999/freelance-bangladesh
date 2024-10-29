@@ -114,6 +114,9 @@ const ClientList: React.FC = () => {
                 Phone
               </th>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                Is Verified
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
                 Actions
               </th>
             </tr>
@@ -131,6 +134,9 @@ const ClientList: React.FC = () => {
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-700">
                   {user.Phone}
+                </td>
+                <td className="px-4 py-2 text-sm text-gray-700">
+                  {user.IsVerified ? "✅" : "❌"}
                 </td>
                 <td className="px-4 py-2">
                   <button
