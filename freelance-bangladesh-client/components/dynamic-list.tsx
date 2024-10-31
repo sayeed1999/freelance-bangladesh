@@ -50,7 +50,7 @@ const DynamicList = <T extends { id: string | number }>({
           <tbody>
             {items.map((item, index) => (
               <tr
-                key={item.id}
+                key={index}
                 className="border-t hover:bg-gray-100 transition duration-200"
               >
                 <td className="px-4 py-2 text-sm text-gray-700">{index + 1}</td>

@@ -92,8 +92,6 @@ const ClientList: React.FC = () => {
     getClients()
       .then((res) => {
         if (res?.result) {
-          console.log(res.result);
-          console.log(users);
           setUsers(res.result);
         }
       })

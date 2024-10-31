@@ -17,7 +17,7 @@ const SubmitOrReview = ({ selectedAssignment, handleClosePopup }: any) => {
   const isTalent = session?.roles?.includes("talent") ?? false;
 
   const columns: Column<any>[] = [
-    { header: "Review ID", accessor: "review_id" },
+    // { header: "Review ID", accessor: "review_id" },
     { header: "Comments", accessor: "comments" },
   ];
 
@@ -31,7 +31,7 @@ const SubmitOrReview = ({ selectedAssignment, handleClosePopup }: any) => {
       .catch((err) => {
         alert(err.message ?? "Some unexpected error has occurred.");
       });
-  }, []);
+  }, [selectedAssignment]);
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex justify-center items-center">

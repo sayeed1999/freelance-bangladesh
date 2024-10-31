@@ -2,6 +2,7 @@ package reviewlist
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,16 +20,18 @@ func ReviewListHandler(useCase ReviewListUseCase) gin.HandlerFunc {
 			return
 		}
 
-		// Call the use case to list bids for the specified job
-		bids, err := useCase.GetReviewList(c.Request.Context(), assignmentID)
+		// Call the use case to list reviews for the specified job
+		reviews, err := useCase.GetReviewList(c.Request.Context(), assignmentID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
+		fmt.Println(len(reviews))
+
 		c.JSON(http.StatusOK, gin.H{
-			"total":  len(bids),
-			"result": bids,
+			"total":  len(reviews),
+			"result": reviews,
 		})
 	}
 }

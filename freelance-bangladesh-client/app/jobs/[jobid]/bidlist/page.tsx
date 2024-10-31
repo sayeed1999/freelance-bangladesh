@@ -78,7 +78,6 @@ export default function BidListPage() {
   useEffect(() => {
     getBidList(jobid)
       .then((res) => {
-        console.log(res);
         if (res?.result) {
           setBidlist(res.result);
         }
