@@ -71,9 +71,28 @@ const useCanActivateTalent = () => {
   }, [session, status, router]);
 }
 
+const useCanActivatePrivateRoute = () => {
+  const { data: session, status } = useSession(authOptions);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      status == "unauthenticated"
+    ) {
+      router.push("/unauthorized");
+      router.refresh();
+    }
+  }, [session, status, router]);
+
+  return {
+    status
+  }
+}
+
 export {
   useCanActivePublicRoute as useCanActivePublicComponent,
   useCanActivateAdmin,
   useCanActivateClient,
   useCanActivateTalent,
+  useCanActivatePrivateRoute,
 };

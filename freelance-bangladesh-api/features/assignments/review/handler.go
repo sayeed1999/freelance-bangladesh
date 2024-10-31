@@ -21,12 +21,20 @@ func ReviewWorkHandler(useCase ReviewWorkUseCase) gin.HandlerFunc {
 			return
 		}
 
+		assignmentID := c.Param("assignmentid")
+		if assignmentID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "assignment id is required"})
+			return
+		}
+
 		// Bind the JSON request to ReviewWorkRequest
 		var request ReviewWorkRequest
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "unable to parse request: " + err.Error()})
 			return
 		}
+
+		request.AssignmentID = assignmentID
 
 		// Call the use case
 		response, err := useCase.ReviewWork(c.Request.Context(), *userClaims, request)

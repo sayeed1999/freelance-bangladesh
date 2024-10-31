@@ -7,15 +7,23 @@ interface FormType {
   submitBtnName: string;
 }
 
+type FieldType = "text" | "textarea" | "select" | "checkbox";
+
+interface SelectOption {
+  label: string;
+  value: any;
+}
+
 interface FormItemType {
   label: string;
   name: string;
-  type: string;
+  type: FieldType;
   id: string;
   ref: React.MutableRefObject<any>;
   placeholder: string;
   required?: boolean;
   validationError?: string;
+  options?: SelectOption[];
 }
 
 const Form = (form: FormType) => {
@@ -59,7 +67,33 @@ const Form = (form: FormType) => {
               // checked={!!formItem.value}
               className="mr-2"
             />
-            {formItem.label}
+            {formItem.placeholder}
+            <div id={formItem.id} className="sr-only">
+              {formItem.validationError}
+            </div>
+          </div>
+        );
+      case "select":
+        return (
+          <div key={index} className="mb-4">
+            <label className="block text-gray-700">{formItem.label}</label>
+            <select
+              id={formItem.id}
+              name={formItem.name}
+              ref={formItem.ref}
+              required={formItem.required}
+              className="w-full px-4 py-2 border rounded-md"
+              defaultValue=""
+            >
+              <option value="" disabled>
+                {formItem.placeholder}
+              </option>
+              {formItem.options?.map((option, optIndex) => (
+                <option key={optIndex} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
             <div id={formItem.id} className="sr-only">
               {formItem.validationError}
             </div>

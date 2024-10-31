@@ -56,7 +56,6 @@ const navItems = [
   {
     name: "Assignment List",
     path: "/assignments",
-    requireRole: "talent",
   },
 ];
 

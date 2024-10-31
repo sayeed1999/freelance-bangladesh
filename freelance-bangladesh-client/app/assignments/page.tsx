@@ -1,70 +1,25 @@
 "use client";
+import ReviewWork from "@/components/assignments/review-work";
+import SubmitWork from "@/components/assignments/submit-work";
 import DynamicList, { Column } from "@/components/dynamic-list";
-import Form from "@/components/form";
-import {
-  getAssignments,
-  getReviewList,
-  submitWork,
-} from "@/services/assignmentService";
-import { useCanActivateTalent } from "@/utils/authorizeHelper";
-import { useEffect, useRef, useState } from "react";
+import { getAssignments, getReviewList } from "@/services/assignmentService";
+import { useCanActivatePrivateRoute } from "@/utils/authorizeHelper";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
-const SubmitOrSeeReviews = ({ selectedAssignment, handleClosePopup }: any) => {
-  const submissionUrlRef = useRef();
-  const commentsRef = useRef();
+const SubmitOrReview = ({ selectedAssignment, handleClosePopup }: any) => {
+  const { data: session, status } = useSession();
   const [reviewlist, setReviewlist] = useState([]);
+
+  // @ts-expect-error
+  const isClient = session?.roles?.includes("client") ?? false;
+  // @ts-expect-error
+  const isTalent = session?.roles?.includes("talent") ?? false;
 
   const columns: Column<any>[] = [
     { header: "Review ID", accessor: "review_id" },
     { header: "Comments", accessor: "comments" },
   ];
-
-  const handleSubmit = () => {
-    submitWork(selectedAssignment.assignment_id, {
-      // @ts-expect-error
-      title: submissionUrlRef.current.value,
-      // @ts-expect-error
-      description: commentsRef.current.value,
-    })
-      .then(() => {
-        // @ts-expect-error
-        submissionUrlRef.current.value = null;
-        // @ts-expect-error
-        commentsRef.current.value = null;
-        alert("submit success!");
-      })
-      .catch((err) => {
-        alert(err.message ?? "Some unexpected error has occurred.");
-      });
-  };
-
-  const submitAssignmentForm = (
-    <Form
-      formTitle="Submit Assignment"
-      submitBtnName="Submit"
-      dispatchAction={handleSubmit}
-      formItems={[
-        {
-          label: "Submission URL",
-          name: "submission_url",
-          ref: submissionUrlRef,
-          type: "text",
-          id: "submission_url",
-          placeholder: "Google Drive link",
-          required: true,
-          validationError: "Submission URL must be provided",
-        },
-        {
-          label: "Comments",
-          name: "comments",
-          ref: commentsRef,
-          type: "textarea",
-          id: "comments",
-          placeholder: "Some comments...",
-        },
-      ]}
-    />
-  );
 
   useEffect(() => {
     getReviewList(selectedAssignment.assignment_id)
@@ -82,7 +37,16 @@ const SubmitOrSeeReviews = ({ selectedAssignment, handleClosePopup }: any) => {
     <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex justify-center items-center">
       <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full mx-4 p-6 flex space-x-8">
         {/* Left side - Form */}
-        <div className="flex-1">{submitAssignmentForm}</div>
+        {isTalent && (
+          <div className="flex-1">
+            <SubmitWork assignment_id={selectedAssignment.assignment_id} />
+          </div>
+        )}
+        {isClient && (
+          <div className="flex-1">
+            <ReviewWork assignment_id={selectedAssignment.assignment_id} />
+          </div>
+        )}
 
         {/* Right side - Reviews */}
         <div className="flex-1 bg-gray-100 p-2 rounded-lg shadow-md flex flex-col items-center">
@@ -102,7 +66,7 @@ const SubmitOrSeeReviews = ({ selectedAssignment, handleClosePopup }: any) => {
 };
 
 export default function AssignmentListPage() {
-  useCanActivateTalent();
+  useCanActivatePrivateRoute();
 
   const [assignmentlist, setAssignmentlist] = useState([]);
   const [selected, setSelected] = useState(null);
@@ -111,6 +75,7 @@ export default function AssignmentListPage() {
   const columns: Column<any>[] = [
     { header: "Job ID", accessor: "job_id" },
     { header: "Amount", accessor: "amount" },
+    { header: "Submission URL", accessor: "submission_url" },
     { header: "Status", accessor: "status" },
   ];
 
@@ -147,7 +112,7 @@ export default function AssignmentListPage() {
       />
 
       {isPopupOpen && selected && (
-        <SubmitOrSeeReviews
+        <SubmitOrReview
           selectedAssignment={selected}
           handleClosePopup={handleClosePopup}
         />
