@@ -7,11 +7,11 @@ import (
 
 type Client struct {
 	BaseModel
-	KeycloakUserID uuid.UUID `gorm:"uniqueIndex;not null"`
-	Email          string    `gorm:"type:varchar(100);uniqueIndex;not null"`
-	Name           string    `gorm:"type:varchar(50);not null"`
-	Phone          string    `gorm:"type:varchar(20);not null"`
-	IsVerified     bool      `gorm:"default:false"`
+	KeycloakUserID uuid.UUID `gorm:"uniqueIndex;not null" json:"keycloak_user_id"`
+	Email          string    `gorm:"type:varchar(100);uniqueIndex;not null" json:"email"`
+	Name           string    `gorm:"type:varchar(50);not null" json:"name"`
+	Phone          string    `gorm:"type:varchar(20);not null" json:"phone"`
+	IsVerified     bool      `gorm:"default:false" json:"is_verified"`
 }
 
 func (u *Client) BeforeCreate(tx *gorm.DB) (err error) {

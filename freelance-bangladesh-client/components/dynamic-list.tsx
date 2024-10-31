@@ -15,7 +15,7 @@ interface DynamicListProps<T> {
   title?: string;
 }
 
-const DynamicList = <T extends { ID: string | number }>({
+const DynamicList = <T extends { id: string | number }>({
   items,
   columns,
   onActionClick,
@@ -50,7 +50,7 @@ const DynamicList = <T extends { ID: string | number }>({
           <tbody>
             {items.map((item, index) => (
               <tr
-                key={item.ID}
+                key={item.id}
                 className="border-t hover:bg-gray-100 transition duration-200"
               >
                 <td className="px-4 py-2 text-sm text-gray-700">{index + 1}</td>

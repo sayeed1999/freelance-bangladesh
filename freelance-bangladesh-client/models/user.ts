@@ -1,9 +1,9 @@
 interface User {
-    ID: string;
-    Email: string;
-    Phone?: string;
-    IsVerified: boolean;
-    Name: string;
+    id: string;
+    email: string;
+    phone?: string;
+    is_verified: boolean;
+    name: string;
 }
 
 export interface Talent extends User {}
