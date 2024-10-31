@@ -1,22 +1,101 @@
 "use client";
 import DynamicList, { Column } from "@/components/dynamic-list";
-import { getAssignments } from "@/services/assignmentService";
+import Form from "@/components/form";
+import {
+  getAssignments,
+  getReviewList,
+  submitWork,
+} from "@/services/assignmentService";
 import { useCanActivateTalent } from "@/utils/authorizeHelper";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const SeeReviews = ({ selected, handleClosePopup }: any) => {
+const SubmitOrSeeReviews = ({ selectedAssignment, handleClosePopup }: any) => {
+  const submissionUrlRef = useRef();
+  const commentsRef = useRef();
+  const [reviewlist, setReviewlist] = useState([]);
+
+  const columns: Column<any>[] = [
+    { header: "Review ID", accessor: "review_id" },
+    { header: "Comments", accessor: "comments" },
+  ];
+
+  const handleSubmit = () => {
+    submitWork(selectedAssignment.assignment_id, {
+      // @ts-expect-error
+      title: submissionUrlRef.current.value,
+      // @ts-expect-error
+      description: commentsRef.current.value,
+    })
+      .then(() => {
+        // @ts-expect-error
+        submissionUrlRef.current.value = null;
+        // @ts-expect-error
+        commentsRef.current.value = null;
+        alert("submit success!");
+      })
+      .catch((err) => {
+        alert(err.message ?? "Some unexpected error has occurred.");
+      });
+  };
+
+  const submitAssignmentForm = (
+    <Form
+      formTitle="Submit Assignment"
+      submitBtnName="Submit"
+      dispatchAction={handleSubmit}
+      formItems={[
+        {
+          label: "Submission URL",
+          name: "submission_url",
+          ref: submissionUrlRef,
+          type: "text",
+          id: "submission_url",
+          placeholder: "Google Drive link",
+          required: true,
+          validationError: "Submission URL must be provided",
+        },
+        {
+          label: "Comments",
+          name: "comments",
+          ref: commentsRef,
+          type: "textarea",
+          id: "comments",
+          placeholder: "Some comments...",
+        },
+      ]}
+    />
+  );
+
+  useEffect(() => {
+    getReviewList(selectedAssignment.assignment_id)
+      .then((res) => {
+        if (res?.result) {
+          setReviewlist(res.result);
+        }
+      })
+      .catch((err) => {
+        alert(err.message ?? "Some unexpected error has occurred.");
+      });
+  }, []);
+
   return (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full text-center">
-        <h2 className="text-xl font-semibold mb-4">Reviews</h2>
-        <div className="flex justify-center space-x-4">
-          <button
-            onClick={handleClosePopup}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-300"
-          >
-            Close
-          </button>
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex justify-center items-center">
+      <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full mx-4 p-6 flex space-x-8">
+        {/* Left side - Form */}
+        <div className="flex-1">{submitAssignmentForm}</div>
+
+        {/* Right side - Reviews */}
+        <div className="flex-1 bg-gray-100 p-2 rounded-lg shadow-md flex flex-col items-center">
+          <DynamicList items={reviewlist} columns={columns} title="Reviews" />
         </div>
+
+        {/* Close button in bottom right */}
+        <button
+          onClick={handleClosePopup}
+          className="absolute bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300 shadow-md"
+        >
+          Close
+        </button>
       </div>
     </div>
   );
@@ -64,11 +143,14 @@ export default function AssignmentListPage() {
         columns={columns}
         title="Assignment List"
         onActionClick={handleActionClick}
-        actionTitle="See Reviews"
+        actionTitle="Submit/ See Reviews"
       />
 
       {isPopupOpen && selected && (
-        <SeeReviews selected={selected} handleClosePopup={handleClosePopup} />
+        <SubmitOrSeeReviews
+          selectedAssignment={selected}
+          handleClosePopup={handleClosePopup}
+        />
       )}
     </>
   );

@@ -21,12 +21,20 @@ func SubmitWorkHandler(useCase SubmitWorkUseCase) gin.HandlerFunc {
 			return
 		}
 
+		assignmentID := c.Param("assignmentid")
+		if assignmentID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "assignment id is required"})
+			return
+		}
+
 		// Bind the JSON request to SubmitWorkRequest
 		var request SubmitWorkRequest
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "unable to parse request: " + err.Error()})
 			return
 		}
+
+		request.AssignmentID = assignmentID // id on the route param gets higher priority
 
 		// Call the use case
 		response, err := useCase.SubmitWork(c.Request.Context(), *userClaims, request)

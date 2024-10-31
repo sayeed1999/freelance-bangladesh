@@ -14,13 +14,14 @@ interface FormItemType {
   id: string;
   ref: React.MutableRefObject<any>;
   placeholder: string;
-  required: boolean;
-  validationError: string;
+  required?: boolean;
+  validationError?: string;
 }
 
 const Form = (form: FormType) => {
   const handleSubmitEvent = (e: any): any => {
     e.preventDefault();
+
     // Call API using dispatch action
     form.dispatchAction();
   };
@@ -36,6 +37,7 @@ const Form = (form: FormType) => {
               name={formItem.name}
               ref={formItem.ref}
               placeholder={formItem.placeholder}
+              required={formItem.required}
               className="w-full px-4 py-2 border rounded-md"
               rows={4}
             />
@@ -53,6 +55,7 @@ const Form = (form: FormType) => {
               id={formItem.id}
               name={formItem.name}
               ref={formItem.ref}
+              required={formItem.required}
               // checked={!!formItem.value}
               className="mr-2"
             />
@@ -72,6 +75,7 @@ const Form = (form: FormType) => {
               name={formItem.name}
               ref={formItem.ref}
               placeholder={formItem.placeholder}
+              required={formItem.required}
               className="w-full px-4 py-2 border rounded-md"
             />
             <div id={formItem.id} className="sr-only">

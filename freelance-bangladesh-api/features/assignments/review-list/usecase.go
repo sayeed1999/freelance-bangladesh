@@ -15,7 +15,8 @@ func NewReviewListUseCase() *reviewListUseCase {
 }
 
 type ReviewResponse struct {
-	Comments string `json:"comments"`
+	ReviewID uuid.UUID `json:"review_id"`
+	Comments string    `json:"comments"`
 }
 
 func (uc *reviewListUseCase) GetReviewList(ctx context.Context, assignmentID string) ([]ReviewResponse, error) {
@@ -30,7 +31,7 @@ func (uc *reviewListUseCase) GetReviewList(ctx context.Context, assignmentID str
 	var results []ReviewResponse
 
 	if err := db.Table("reviews").
-		Select("reviews.comments").
+		Select("reviews.id as review_id, reviews.comments").
 		Where("reviews.assignment_id = ?", parsedAssignmentID).
 		Scan(&results).Error; err != nil {
 		return nil, fmt.Errorf("failed to list reviews: %v", err)

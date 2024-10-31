@@ -13,7 +13,7 @@ import (
 
 type SubmitWorkRequest struct {
 	AssignmentID  string `json:"assignment_id" validate:"required,uuid"`
-	SubmissionURL string `json:"work_url" validate:"required,url"`
+	SubmissionURL string `json:"submission_url" validate:"required,url"`
 	Comments      string `json:"comments,omitempty"`
 }
 
@@ -53,7 +53,7 @@ func (uc *submitWorkUseCase) SubmitWork(ctx context.Context, claims middlewares.
 	}
 
 	// Ensure the assignment is not already submitted
-	if assignment.Status != "PENDING" {
+	if assignment.Status != models.PENDING {
 		return nil, fmt.Errorf("assignment has already been submitted or is closed")
 	}
 

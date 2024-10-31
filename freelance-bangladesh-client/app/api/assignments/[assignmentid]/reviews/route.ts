@@ -9,3 +9,12 @@ export async function POST(req: any) {
 
     return await makeAuthorizedHttpRequest(url, "POST", body);
 }
+
+export async function GET(req: any) {
+    const urlParts = req.url.split('/');
+    const assignmentid = urlParts[urlParts.length - 2];
+
+    const url = `${process.env.API_URL}/api/v1/assignments/${assignmentid}/reviews`;
+
+    return await makeAuthorizedHttpRequest(url);
+}

@@ -26,3 +26,8 @@ export const addReview = (assignmentID: string, body: any) =>
         body 
     });
   
+export const getReviewList = (assignmentID: string) => 
+    callApi({ 
+        url: `/api/assignments/${assignmentID}/reviews`, 
+    });
+    
