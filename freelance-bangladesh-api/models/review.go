@@ -5,6 +5,6 @@ import "github.com/google/uuid"
 type Review struct {
 	BaseModel
 	AssignmentID uuid.UUID
-	Assignment
-	Comments string `gorm:"type:text"`
+	Assignment   Assignment
+	Comments     string `gorm:"type:text"`
 }
