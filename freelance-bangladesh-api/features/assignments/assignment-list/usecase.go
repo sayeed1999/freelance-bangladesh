@@ -16,16 +16,11 @@ func NewAssignmentListUseCase() *listAssignmentsUseCase {
 	return &listAssignmentsUseCase{}
 }
 
-// type ReviewResponse struct {
-// 	Comments string `json:"comments"`
-// }
-
 type AssignmentResponse struct {
 	AssignmentID uuid.UUID `json:"assignment_id"`
 	JobID        uuid.UUID `json:"job_id"`
 	Amount       *float32  `json:"amount,omitempty"`
 	Status       string    `json:"status"`
-	// Reviews      []ReviewResponse
 }
 
 func (uc *listAssignmentsUseCase) AssignmentList(ctx context.Context, claims middlewares.Claims) ([]AssignmentResponse, error) {
