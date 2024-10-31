@@ -1,5 +1,10 @@
 import { callApi } from "./api";
 
+export const getAssignments = () =>
+    callApi({
+        url: `/api/assignments`
+    });
+
 export const assignTalent = (body: any) => 
     callApi({ 
         url: `/api/assignments`, 

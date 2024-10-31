@@ -7,3 +7,9 @@ export async function POST(req: any) {
 
   return await makeAuthorizedHttpRequest(url, "POST", body);
 }
+
+export async function GET() {
+
+  const url = `${process.env.API_URL}/api/v1/assignments`;
+  return await makeAuthorizedHttpRequest(url);
+}

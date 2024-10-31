@@ -53,6 +53,11 @@ const navItems = [
     path: "/jobs/create",
     requireRole: "client",
   },
+  {
+    name: "Assignment List",
+    path: "/assignments",
+    requireRole: "talent",
+  },
 ];
 
 export default async function Nav() {

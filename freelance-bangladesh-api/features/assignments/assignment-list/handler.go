@@ -10,7 +10,7 @@ import (
 )
 
 type AssignmentListUseCase interface {
-	AssignmentList(ctx context.Context, userClaims middlewares.Claims, talentID string) ([]AssignmentResponse, error)
+	AssignmentList(ctx context.Context, userClaims middlewares.Claims) ([]AssignmentResponse, error)
 }
 
 func AssignmentListHandler(useCase AssignmentListUseCase) gin.HandlerFunc {
@@ -21,14 +21,8 @@ func AssignmentListHandler(useCase AssignmentListUseCase) gin.HandlerFunc {
 			return
 		}
 
-		talentID := c.Param("talentid")
-		if talentID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "talent id is required"})
-			return
-		}
-
 		// Call the use case to list assignments for the specified talent
-		assignments, err := useCase.AssignmentList(c.Request.Context(), *userClaims, talentID)
+		assignments, err := useCase.AssignmentList(c.Request.Context(), *userClaims)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return

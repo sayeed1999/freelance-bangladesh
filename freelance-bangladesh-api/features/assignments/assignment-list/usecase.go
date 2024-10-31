@@ -16,31 +16,25 @@ func NewAssignmentListUseCase() *listAssignmentsUseCase {
 	return &listAssignmentsUseCase{}
 }
 
+// type ReviewResponse struct {
+// 	Comments string `json:"comments"`
+// }
+
 type AssignmentResponse struct {
 	AssignmentID uuid.UUID `json:"assignment_id"`
 	JobID        uuid.UUID `json:"job_id"`
 	Amount       *float32  `json:"amount,omitempty"`
-	Message      string    `json:"message"`
 	Status       string    `json:"status"`
+	// Reviews      []ReviewResponse
 }
 
-func (uc *listAssignmentsUseCase) AssignmentList(ctx context.Context, claims middlewares.Claims, talentID string) ([]AssignmentResponse, error) {
+func (uc *listAssignmentsUseCase) AssignmentList(ctx context.Context, claims middlewares.Claims) ([]AssignmentResponse, error) {
 	db := database.DB.Db
 
-	// Parse and validate TalentID as a UUID
-	parsedTalentID, err := uuid.Parse(talentID)
-	if err != nil {
-		return nil, fmt.Errorf("invalid TalentID format: %v", err)
-	}
-
+	// the talent is defined by the user claims, no extra params needed!
 	var talent models.Talent
 	if err := db.First(&talent, "Email = ?", claims.Email).Error; err != nil {
 		return nil, fmt.Errorf("failed to get talent: %v", err.Error())
-	}
-
-	// Ensure the talent making the request is the owner of the assignment
-	if talentID != talent.ID.String() {
-		return nil, fmt.Errorf("you do not have permission to fetch this user's assignments")
 	}
 
 	// Define a slice to hold the result with assignment details only
@@ -48,8 +42,8 @@ func (uc *listAssignmentsUseCase) AssignmentList(ctx context.Context, claims mid
 
 	// Perform the query to retrieve assignments by talent
 	if err := db.Table("assignments").
-		Select("assignments.id AS assignment_id, assignments.job_id, assignments.budget AS amount, assignments.message, assignments.status").
-		Where("assignments.talent_id = ?", parsedTalentID).
+		Select("assignments.id AS assignment_id, assignments.job_id, assignments.budget AS amount, assignments.status").
+		Where("assignments.talent_id = ?", talent.ID).
 		Scan(&results).Error; err != nil {
 		return nil, fmt.Errorf("failed to list assignments: %v", err)
 	}
