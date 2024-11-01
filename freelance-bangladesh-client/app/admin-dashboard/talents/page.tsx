@@ -16,7 +16,7 @@ const TalentEditModal = ({
 
   const handleSave = () => {
     updateTalent({
-      TalentID: selectedUser.id,
+      talent_id: selectedUser.id,
       is_verified: isVerified,
     })
       .then(() => {

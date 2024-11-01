@@ -16,7 +16,7 @@ const ClientEditModal = ({
 
   const handleSave = () => {
     updateClient({
-      ClientID: selectedUser.id,
+      client_id: selectedUser.id,
       is_verified: isVerified,
     })
       .then(() => {
