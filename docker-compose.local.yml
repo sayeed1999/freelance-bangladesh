@@ -13,12 +13,12 @@ services:
       - API_DATABASE_PASSWORD=${API_DATABASE_PASSWORD}
       - API_DATABASE_NAME=${API_DATABASE_NAME}
       # keycloak specific envs
-      - API_KEYCLOAK_BASEURL=${API_KEYCLOAK_BASEURL}
+      - API_KEYCLOAK_BASEURL=http://keycloak:8080
       - API_KEYCLOAK_REALM=${API_KEYCLOAK_REALM}
       - API_KEYCLOAK_RESTAPI_CLIENTID=${API_KEYCLOAK_RESTAPI_CLIENTID}
       - API_KEYCLOAK_RESTAPI_CLIENTSECRET=${API_KEYCLOAK_RESTAPI_CLIENTSECRET}
     ports:
-      - "8080:8080"
+      - "5000:5000"
     restart: unless-stopped
     networks:
       - api_network
@@ -50,7 +50,6 @@ services:
       - ~/data/postgresql/data:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
-      - postgres_network
       - api_network
 
   pgadmin:
@@ -65,7 +64,7 @@ services:
       - ~/data/pgadmin:/var/lib/pgadmin
     restart: unless-stopped
     networks:
-      - postgres_network
+      - api_network
 
   keycloak:
     image: quay.io/keycloak/keycloak:25.0
@@ -88,7 +87,6 @@ services:
       - ./keycloak/:/opt/keycloak/data/import
     restart: unless-stopped
     networks:
-      - keycloak_network
       - api_network
     depends_on:
       - keycloak-db
@@ -105,7 +103,7 @@ services:
       - ~/data/keycloak-db/data:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
-      - keycloak_network
+      - api_network
 
   mail-server:
     image: mailhog/mailhog
@@ -114,12 +112,8 @@ services:
       - 1025:1025 # smtp server
       - 8025:8025 # web ui
     networks:
-      - keycloak_network
+      - api_network
 
 networks:
   api_network:
-    driver: bridge
-  postgres_network:
-    driver: bridge
-  keycloak_network:
     driver: bridge

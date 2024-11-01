@@ -1,9 +1,9 @@
 ListenIP: "0.0.0.0"
-ListenPort: "8080"
+ListenPort: "5000"
 Dashboard:
   Title: "Freelance Bangladesh"
 Keycloak:
-  BaseUrl: "http://0.0.0.0:9990"
+  BaseUrl: "http://127.0.0.1:9990"
   Realm: "freelance-bangladesh"
   RestApi:
     ClientId: ""

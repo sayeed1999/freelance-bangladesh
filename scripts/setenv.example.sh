@@ -7,7 +7,7 @@ export KEYCLOAK_ADMIN_PASSWORD=xxx
 export PGADMIN_EMAIL=xxx
 export PGADMIN_PASSWORD=xxx
 
-export API_KEYCLOAK_BASEURL=http://127.0.0.1:9990
+export API_KEYCLOAK_BASEURL=http://127.0.0.1:9990 # only for running locally
 export API_KEYCLOAK_REALM=freelance-bangladesh
 export API_KEYCLOAK_RESTAPI_CLIENTID=backend-api
 export API_KEYCLOAK_RESTAPI_CLIENTSECRET=xxx
