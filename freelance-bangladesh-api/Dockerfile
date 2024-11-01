@@ -26,8 +26,8 @@ WORKDIR /app
 ## Copy the built binary from the builder stage
 COPY --from=builder /app/golang-api .
 
-## Expose port 8080 for Gin server
-EXPOSE 8080
+## Expose port for Gin server
+EXPOSE 5000
 
 ## Run the application
 ENTRYPOINT ["/app/golang-api"]

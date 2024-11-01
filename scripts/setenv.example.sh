@@ -13,7 +13,7 @@ export API_KEYCLOAK_RESTAPI_CLIENTID=backend-api
 export API_KEYCLOAK_RESTAPI_CLIENTSECRET=xxx
 
 export API_DATABASE_HOST=127.0.0.1 # only for running locally
-export API_DATABASE_PORT=5432
+export API_DATABASE_PORT=5432 # only for running locally
 export API_DATABASE_USER=admin
 export API_DATABASE_PASSWORD=xxx
 export API_DATABASE_NAME=freelance-db
