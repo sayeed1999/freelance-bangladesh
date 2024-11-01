@@ -30,7 +30,7 @@ const JobCard = ({ job }) => {
       {session?.roles?.includes("client") && (
         <button
             className="mt-4 bg-violet-700 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors duration-300"
-            onClick={() => router.push(`/jobs/${job.ID}/bidlist`)}
+            onClick={() => router.push(`/jobs/${job.id}/bidlist`)}
         >
           View Bids on this Job
         </button>
@@ -38,7 +38,7 @@ const JobCard = ({ job }) => {
 
       {/* Modal */}
       {isBidModalVisible && (
-        <BidJob jobID={job.ID} onCancel={() => setIsBidModalVisible(false)} />
+        <BidJob jobID={job.id} onCancel={() => setIsBidModalVisible(false)} />
       )}
     </div>
   );

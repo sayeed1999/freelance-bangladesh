@@ -21,12 +21,12 @@ export default function SignupTalentPage() {
     }
 
     signupTalent({
-      Email: emailRef.current.value,
-      FirstName: firstnameRef.current.value,
-      LastName: lastnameRef.current.value,
-      MobileNumber: phoneRef.current.value,
-      Password: passwordRef.current.value,
-      Role: "talent",
+      email: emailRef.current.value,
+      first_name: firstnameRef.current.value,
+      last_name: lastnameRef.current.value,
+      mobile_number: phoneRef.current.value,
+      password: passwordRef.current.value,
+      role: "talent",
     }).then(() => {
       alert("signup success!")
       // reset
