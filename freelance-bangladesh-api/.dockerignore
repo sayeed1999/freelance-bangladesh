@@ -1,0 +1,30 @@
+# Ignore the Go module and cache directories
+/bin
+/build
+/cache
+/.cache
+
+# Ignore dependencies and artifacts
+/vendor
+*.log
+*.out
+*.swp
+
+# Ignore test files and folders
+/test
+*.md
+*.yaml
+*.yml
+
+# Ignore version control files
+.git
+.gitignore
+.dockerignore
+
+# Ignore environment and configuration files
+.env
+*.config.json
+
+# Ignore IDE and editor configuration files
+*.vscode
+*.idea

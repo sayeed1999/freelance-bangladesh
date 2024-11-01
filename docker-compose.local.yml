@@ -1,17 +1,24 @@
 services:
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    ports:
-      - 5434:80
+  golang-api:
+    build:
+      context: ./freelance-bangladesh-api
+      dockerfile: Dockerfile
+    container_name: golang-api
     environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
+      - GIN_MODE=release                            # Set Gin to run in release mode
+      - API_DATABASE_HOST=postgres-db
+      - API_DATABASE_PORT=${API_DATABASE_PORT}
+      - API_DATABASE_USER=${API_DATABASE_USER}
+      - API_DATABASE_PASSWORD=${API_DATABASE_PASSWORD}
+      - API_DATABASE_NAME=${API_DATABASE_NAME}
+    ports:
+      - "8080:8080"
     restart: unless-stopped
     networks:
-      - postgres_network
+      - api_network
+    depends_on:
+      - postgres-db
+      - keycloak-db
   
   postgres-db:
     image: postgres:16.4
@@ -23,23 +30,25 @@ services:
     ports:
       - ${API_DATABASE_PORT}:5432
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ~/data/postgresql/data:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
       - postgres_network
-  
-  keycloak-db:
-    image: postgres:16.4
-    container_name: keycloak-db
+      - api_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    ports:
+      - 5434:80
     environment:
-      POSTGRES_DB: ${KEYCLOAK_DATABASE_NAME}
-      POSTGRES_USER: ${KEYCLOAK_DATABASE_USER}
-      POSTGRES_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     volumes:
-      - keycloak_db_data:/var/lib/postgresql/data
+      - ~/data/pgadmin:/var/lib/pgadmin
     restart: unless-stopped
     networks:
-      - keycloak_network
+      - postgres_network
 
   keycloak:
     image: quay.io/keycloak/keycloak:25.0
@@ -61,9 +70,23 @@ services:
     volumes:
       - ./keycloak/:/opt/keycloak/data/import
     restart: unless-stopped
+    networks:
+      - keycloak_network
+      - api_network
     depends_on:
       - keycloak-db
     command: -v start-dev --import-realm
+  
+  keycloak-db:
+    image: postgres:16.4
+    container_name: keycloak-db
+    environment:
+      POSTGRES_DB: ${KEYCLOAK_DATABASE_NAME}
+      POSTGRES_USER: ${KEYCLOAK_DATABASE_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
+    volumes:
+      - ~/data/keycloak-db/data:/var/lib/postgresql/data
+    restart: unless-stopped
     networks:
       - keycloak_network
 
@@ -76,15 +99,9 @@ services:
     networks:
       - keycloak_network
 
-volumes:
-  pgadmin_data:
-    driver: local
-  postgres_data:
-    driver: local
-  keycloak_db_data:
-    driver: local
-
 networks:
+  api_network:
+    driver: bridge
   postgres_network:
     driver: bridge
   keycloak_network:
