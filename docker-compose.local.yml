@@ -6,11 +6,17 @@ services:
     container_name: golang-api
     environment:
       - GIN_MODE=release                            # Set Gin to run in release mode
+      # database specific envs
       - API_DATABASE_HOST=postgres-db
       - API_DATABASE_PORT=${API_DATABASE_PORT}
       - API_DATABASE_USER=${API_DATABASE_USER}
       - API_DATABASE_PASSWORD=${API_DATABASE_PASSWORD}
       - API_DATABASE_NAME=${API_DATABASE_NAME}
+      # keycloak specific envs
+      - API_KEYCLOAK_BASEURL=${API_KEYCLOAK_BASEURL}
+      - API_KEYCLOAK_REALM=${API_KEYCLOAK_REALM}
+      - API_KEYCLOAK_RESTAPI_CLIENTID=${API_KEYCLOAK_RESTAPI_CLIENTID}
+      - API_KEYCLOAK_RESTAPI_CLIENTSECRET=${API_KEYCLOAK_RESTAPI_CLIENTSECRET}
     ports:
       - "8080:8080"
     restart: unless-stopped
