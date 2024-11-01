@@ -19,6 +19,17 @@ services:
     depends_on:
       - postgres-db
       - keycloak-db
+
+  # frontend-app:
+  #   build:
+  #     context: ./freelance-bangladesh-client
+  #     dockerfile: Dockerfile
+  #   container_name: frontend-app
+  #   ports:
+  #     - "3000:3000"
+  #   restart: unless-stopped
+  #   networks:
+  #     - api_network
   
   postgres-db:
     image: postgres:16.4
