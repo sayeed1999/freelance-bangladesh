@@ -7,12 +7,12 @@ import (
 
 type Bid struct {
 	BaseModel
-	JobID    uuid.UUID
-	Job      Job
-	TalentID uuid.UUID
-	Talent   Talent
-	Message  string   `gorm:"type:text"` // Optional message from talent
-	Amount   *float32 `gorm:""`          // Optional bid amount (pointer to float32)
+	JobID    uuid.UUID `json:"job_id"`
+	Job      Job       `json:"job"`
+	TalentID uuid.UUID `json:"talent_id"`
+	Talent   Talent    `json:"talent"`
+	Message  string    `json:"message" gorm:"type:text"` // Optional message from talent
+	Amount   *float32  `json:"amount,omitempty" gorm:""` // Optional bid amount (pointer to float32)
 }
 
 func (u *Bid) BeforeCreate(tx *gorm.DB) (err error) {

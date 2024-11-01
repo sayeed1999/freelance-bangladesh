@@ -18,8 +18,8 @@ func NewUpdateClientUseCase() *updateClientUseCase {
 }
 
 type UpdateClientCommand struct {
-	ClientID   uuid.UUID `validate:"required,uuid" json:"client_id"`
-	IsVerified *bool     ` json:"is_verified"` // Pointer will be null if not provided by user
+	ClientID   uuid.UUID `json:"client_id" validate:"required,uuid"`
+	IsVerified *bool     `json:"is_verified"` // Pointer will be null if not provided by user
 }
 
 func (uc *updateClientUseCase) Handler(ctx context.Context, claims middlewares.Claims, command UpdateClientCommand) error {

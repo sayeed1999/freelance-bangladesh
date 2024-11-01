@@ -9,13 +9,13 @@ import (
 
 type Job struct {
 	BaseModel
-	Title       string     `gorm:"size:255;not null"`
-	Description string     `gorm:"type:text;not null"`
-	Budget      float32    `gorm:"not null"`
-	Deadline    *time.Time `gorm:"type:date"`
-	ClientID    uuid.UUID
-	Client      Client
-	Status      jobStatus `gorm:"size:20;default:'active'"`
+	Title       string     `json:"title" gorm:"size:255;not null"`
+	Description string     `json:"description" gorm:"type:text;not null"`
+	Budget      float32    `json:"budget" gorm:"not null"`
+	Deadline    *time.Time `json:"deadline,omitempty" gorm:"type:date"`
+	ClientID    uuid.UUID  `json:"client_id"`
+	Client      Client     `json:"client"`
+	Status      jobStatus  `json:"status" gorm:"size:20;default:'active'"`
 }
 
 type jobStatus string

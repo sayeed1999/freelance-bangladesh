@@ -9,15 +9,15 @@ import (
 
 type Assignment struct {
 	BaseModel
-	TalentID      uuid.UUID
-	Talent        Talent
-	JobID         uuid.UUID
-	Job           Job
-	Budget        float32          `gorm:"not null"`
-	AssignedAt    time.Time        `gorm:"type:date"`
-	SubmittedAt   *time.Time       `gorm:"type:date"`
-	SubmissionURL *string          `gorm:"type:text"`
-	Status        submissionStatus `gorm:"size:20;default:'pending'"`
+	TalentID      uuid.UUID        `json:"talent_id"`
+	Talent        Talent           `json:"talent"`
+	JobID         uuid.UUID        `json:"job_id"`
+	Job           Job              `json:"job"`
+	Budget        float32          `json:"budget" gorm:"not null"`
+	AssignedAt    time.Time        `json:"assigned_at" gorm:"type:date"`
+	SubmittedAt   *time.Time       `json:"submitted_at,omitempty" gorm:"type:date"`
+	SubmissionURL *string          `json:"submission_url,omitempty" gorm:"type:text"`
+	Status        submissionStatus `json:"status" gorm:"size:20;default:'pending'"`
 }
 
 type submissionStatus string

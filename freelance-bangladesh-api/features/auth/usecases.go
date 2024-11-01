@@ -11,12 +11,12 @@ import (
 )
 
 type RegisterRequest struct {
-	Password     string `valdate:"required"`
-	FirstName    string `validate:"min=1,max=30"`
-	LastName     string `validate:"min=1,max=30"`
-	Email        string `validate:"required,email"`
-	MobileNumber string
-	Role         string
+	Password     string `json:"password" validate:"required"`
+	FirstName    string `json:"first_name" validate:"min=1,max=30"`
+	LastName     string `json:"last_name" validate:"min=1,max=30"`
+	Email        string `json:"email" validate:"required,email"`
+	MobileNumber string `json:"mobile_number"`
+	Role         string `json:"role"`
 }
 
 type RegisterResponse struct {

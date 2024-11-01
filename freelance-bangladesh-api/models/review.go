@@ -7,9 +7,9 @@ import (
 
 type Review struct {
 	BaseModel
-	AssignmentID uuid.UUID
-	Assignment   Assignment
-	Comments     string `gorm:"type:text"`
+	AssignmentID uuid.UUID  `json:"assignment_id"`
+	Assignment   Assignment `json:"assignment"`
+	Comments     string     `json:"comments" gorm:"type:text"`
 }
 
 func (u *Review) BeforeCreate(tx *gorm.DB) (err error) {

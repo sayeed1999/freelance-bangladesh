@@ -12,9 +12,9 @@ import (
 )
 
 type BidRequest struct {
-	JobID   string   `validate:"required,uuid"`  // Ensure it's a valid UUID
-	Amount  *float32 `validate:"omitempty,gt=0"` // Optional, but must be greater than 0 if provided
-	Message string   `validate:"max=1000"`       // Message with a max length of 1000 characters
+	JobID   string   `json:"job_id" validate:"required,uuid"`  // Ensure it's a valid UUID
+	Amount  *float32 `json:"amount" validate:"omitempty,gt=0"` // Optional, but must be greater than 0 if provided
+	Message string   `json:"message" validate:"max=1000"`      // Message with a max length of 1000 characters
 }
 
 type BidResponse struct {

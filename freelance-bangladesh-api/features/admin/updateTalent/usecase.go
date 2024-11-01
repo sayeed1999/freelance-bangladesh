@@ -17,8 +17,8 @@ func NewUpdateTalentUseCase() *updateTalentUseCase {
 }
 
 type UpdateTalentCommand struct {
-	TalentID   string `validate:"required,max=36" json:"talent_id"`
-	IsVerified *bool  ` json:"is_verified"` // Pointer will be null if not provided by user
+	TalentID   string `json:"talent_id" validate:"required,max=36"`
+	IsVerified *bool  `json:"is_verified"` // Pointer will be null if not provided by user
 }
 
 func (uc *updateTalentUseCase) Handler(ctx context.Context, claims middlewares.Claims, command UpdateTalentCommand) error {

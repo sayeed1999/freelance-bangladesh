@@ -12,10 +12,10 @@ import (
 )
 
 type CreateJobRequest struct {
-	Title       string  `validate:"required,min=3,max=50"`
-	Description string  `validate:"min=0,max=1000"`
-	Budget      float32 `validate:"required"`
-	Deadline    *time.Time
+	Title       string     `json:"title" validate:"required,min=3,max=50"`
+	Description string     `json:"description" validate:"min=0,max=1000"`
+	Budget      float32    `json:"budget" validate:"required"`
+	Deadline    *time.Time `json:"deadline,omitempty"`
 }
 
 type CreateJobResponse struct {
