@@ -3,7 +3,7 @@ ListenPort: "5000"
 Dashboard:
   Title: "Freelance Bangladesh"
 Keycloak:
-  BaseUrl: "http://127.0.0.1:8080"
+  BaseUrl: "http://localhost:8080"
   Realm: "freelance-bangladesh"
   RestApi:
     ClientId: ""
