@@ -14,7 +14,7 @@ services:
       - API_DATABASE_NAME=${API_DATABASE_NAME}
       # keycloak specific envs
       - API_KEYCLOAK_BASEURL=http://keycloak:8080
-      - API_KEYCLOAK_REALM=${API_KEYCLOAK_REALM}
+      - API_KEYCLOAK_REALM=freelance-bangladesh
       - API_KEYCLOAK_RESTAPI_CLIENTID=${API_KEYCLOAK_RESTAPI_CLIENTID}
       - API_KEYCLOAK_RESTAPI_CLIENTSECRET=${API_KEYCLOAK_RESTAPI_CLIENTSECRET}
     ports:
@@ -26,16 +26,23 @@ services:
       - postgres-db
       - keycloak-db
 
-  # frontend-app:
-  #   build:
-  #     context: ./freelance-bangladesh-client
-  #     dockerfile: Dockerfile
-  #   container_name: frontend-app
-  #   ports:
-  #     - "3000:3000"
-  #   restart: unless-stopped
-  #   networks:
-  #     - api_network
+  web-client:
+    build:
+      context: ./freelance-bangladesh-client
+      dockerfile: Dockerfile
+    container_name: web-client
+    environment:
+      - API_URL=http://golang-api:5000                                    # <golang_api_url>
+      - NEXTAUTH_URL=http://web-client:3000                               # <web_client_url>
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_ISSUER=http://keycloak:8080/realms/freelance-bangladesh  # <keycloak_url>/realms/<realm_name>
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - api_network
   
   postgres-db:
     image: postgres:16.4
