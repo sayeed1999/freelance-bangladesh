@@ -97,11 +97,11 @@ func syncUserToDatabase(role string, keycloakUserID uuid.UUID, user gocloak.User
 	// Sync keycloak user (client) to our database!!
 	if role == string(enums.ROLE_CLIENT) {
 		client := &models.Client{
-			KeycloakUserID: &keycloakUserID,
-			Email:          *user.Email,
-			Name:           *user.FirstName + " " + *user.LastName,
-			Phone:          phone,
-			IsVerified:     true, // client acc is created by admin!
+			// KeycloakUserID: &keycloakUserID,
+			Email:      *user.Email,
+			Name:       *user.FirstName + " " + *user.LastName,
+			Phone:      phone,
+			IsVerified: true, // client acc is created by admin!
 		}
 		if err := db.Create(&client).Error; err != nil {
 			return fmt.Errorf("failed to sync client account with auth provider: %s", err.Error())
@@ -111,11 +111,11 @@ func syncUserToDatabase(role string, keycloakUserID uuid.UUID, user gocloak.User
 	// Sync keycloak user (talent) to our database!!
 	if role == string(enums.ROLE_TALENT) {
 		talent := &models.Talent{
-			KeycloakUserID: &keycloakUserID,
-			Email:          *user.Email,
-			Name:           *user.FirstName + " " + *user.LastName,
-			Phone:          phone,
-			IsVerified:     false, // an admin need to verify a talent
+			// KeycloakUserID: &keycloakUserID,
+			Email:      *user.Email,
+			Name:       *user.FirstName + " " + *user.LastName,
+			Phone:      phone,
+			IsVerified: false, // an admin need to verify a talent
 		}
 		if err := db.Create(&talent).Error; err != nil {
 			return fmt.Errorf("failed to sync talent account with auth provider: %s", err.Error())
