@@ -97,7 +97,7 @@ func syncUserToDatabase(role string, keycloakUserID uuid.UUID, user gocloak.User
 	// Sync keycloak user (client) to our database!!
 	if role == string(enums.ROLE_CLIENT) {
 		client := &models.Client{
-			KeycloakUserID: keycloakUserID,
+			KeycloakUserID: &keycloakUserID,
 			Email:          *user.Email,
 			Name:           *user.FirstName + " " + *user.LastName,
 			Phone:          phone,
@@ -111,7 +111,7 @@ func syncUserToDatabase(role string, keycloakUserID uuid.UUID, user gocloak.User
 	// Sync keycloak user (talent) to our database!!
 	if role == string(enums.ROLE_TALENT) {
 		talent := &models.Talent{
-			KeycloakUserID: keycloakUserID,
+			KeycloakUserID: &keycloakUserID,
 			Email:          *user.Email,
 			Name:           *user.FirstName + " " + *user.LastName,
 			Phone:          phone,
