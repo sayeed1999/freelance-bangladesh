@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/NextAuthOptions";
 
 const useCanActivePublicRoute = () => {
   const { data: session, status } = useSession(authOptions);

@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
 import { getAccessToken } from "@/utils/sessionTokenAccessor";
+import { authOptions } from "../auth/[...nextauth]/NextAuthOptions";
 
 export async function makeHttpRequest(
     url: string,

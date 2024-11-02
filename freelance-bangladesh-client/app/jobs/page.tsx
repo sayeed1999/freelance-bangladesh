@@ -2,8 +2,8 @@ import { SetDynamicRoute } from "@/utils/setDynamicRoute";
 import { getAllJobs } from "@/services/jobService";
 import JobList from "@/components/jobs/jobList";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
+import { authOptions } from "../api/auth/[...nextauth]/NextAuthOptions";
 
 export default async function Jobs() {
   const session = await getServerSession(authOptions);
