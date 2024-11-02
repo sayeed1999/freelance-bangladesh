@@ -33,6 +33,7 @@ func NewRegisterUseCase(im identityManager) *registerUseCase {
 	}
 }
 
+// *Depricated Functionality*
 func (uc *registerUseCase) Register(ctx context.Context, request RegisterRequest) (*RegisterResponse, error) {
 	var validate = validator.New()
 	err := validate.Struct(request)

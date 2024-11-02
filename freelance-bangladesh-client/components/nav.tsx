@@ -20,16 +20,17 @@ function NavLink({ href, children }: NavLinkProps) {
 }
 
 const navItems = [
-  {
-    name: "Client Signup",
-    path: "/signup/client",
-    requireRole: "admin",
-  },
-  {
-    name: "Talent Signup",
-    path: "/signup/talent",
-    publicRoute: true,
-  },
+  // *depricated routes*
+  // {
+  //   name: "Client Signup",
+  //   path: "/signup/client",
+  //   requireRole: "admin",
+  // },
+  // {
+  //   name: "Talent Signup",
+  //   path: "/signup/talent",
+  //   publicOnlyRoute: true,
+  // },
   {
     name: "Client List",
     path: "/admin-dashboard/clients",
@@ -66,7 +67,8 @@ export default async function Nav() {
     <ul className="mt-3">
       {navItems
         .filter((item) => {
-          if (item.publicRoute) return !session; // skip public routes for logged in state
+          // @ts-ignore
+          if (item?.publicOnlyRoute) return !session; // skip public routes for logged in state
           if (session && !item.requireRole) return true;
           return session?.roles?.includes(item.requireRole);
         })
