@@ -33,11 +33,11 @@ services:
     container_name: web-client
     environment:
       - API_URL=http://golang-api:5000                                    # <golang_api_url>
-      - NEXTAUTH_URL=http://web-client:3000                               # <web_client_url>
+      - NEXTAUTH_URL=http://localhost:3000                               # <exposed_web_client_url> #TODO: not sure working or not for keycloak
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
-      - KEYCLOAK_ISSUER=http://keycloak:8080/realms/freelance-bangladesh  # <keycloak_url>/realms/<realm_name>
+      - KEYCLOAK_ISSUER=http://keycloak:8080/realms/freelance-bangladesh  # <keycloak_address>/realms/<realm_name>
     ports:
       - "3000:3000"
     restart: unless-stopped
@@ -77,7 +77,7 @@ services:
     image: quay.io/keycloak/keycloak:25.0
     container_name: keycloak
     environment:
-      KC_HOSTNAME: localhost
+      KC_HOSTNAME: localhost # Note: use server host name when deployed!!
       KC_HOSTNAME_STRICT_BACKCHANNEL: false
       KC_HTTP_ENABLED: true
       KC_HOSTNAME_STRICT_HTTPS: false
@@ -89,7 +89,7 @@ services:
       KC_DB_USERNAME: ${KEYCLOAK_DATABASE_USER}
       KC_DB_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
     ports:
-      - 9990:8080
+      - 8080:8080
     volumes:
       - ./keycloak/:/opt/keycloak/data/import
     restart: unless-stopped

@@ -26,7 +26,7 @@ chmod +x ./scripts/stop-docker.local.sh
 ./scripts/start-docker.local.sh
 ```
 
-- Navigate to `http://localhost:9990` and check keycloak is running properly!!
+- Navigate to `http://localhost:8080` and check keycloak is running properly!!
 
 - To stop the containers, run the stop script by running
 

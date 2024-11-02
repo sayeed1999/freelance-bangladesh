@@ -11,7 +11,7 @@ export KEYCLOAK_ADMIN_PASSWORD=xxx
 export PGADMIN_EMAIL=xxx
 export PGADMIN_PASSWORD=xxx
 
-# export API_KEYCLOAK_BASEURL=http://127.0.0.1:9990 # only for running locally
+# export API_KEYCLOAK_BASEURL=http://127.0.0.1:8080 # only for running locally
 # export API_KEYCLOAK_REALM=freelance-bangladesh # only for running locally
 export API_KEYCLOAK_RESTAPI_CLIENTID=backend-api
 export API_KEYCLOAK_RESTAPI_CLIENTSECRET=xxx
@@ -28,4 +28,4 @@ export API_DATABASE_NAME=freelance-db
 export NEXTAUTH_SECRET=any-random-long-string-123
 export KEYCLOAK_CLIENT_ID=frontend-client
 export KEYCLOAK_CLIENT_SECRET=JJxzZNg0aPNDbftzYHu7bjAsWeN6Mbov
-# export KEYCLOAK_ISSUER=http://localhost:9990/realms/freelance-bangladesh # only for running locally
+# export KEYCLOAK_ISSUER=http://localhost:8080/realms/freelance-bangladesh # only for running locally
