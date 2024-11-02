@@ -63,7 +63,7 @@ const useCanActivateTalent = () => {
     if (
       status == "unauthenticated" ||
       (status == "authenticated" && 
-      !(session.roles?.includes("admin") || session.roles?.includes("talent")))
+      (session.roles?.includes("admin") || session.roles?.includes("client")))
     ) {
       router.push("/unauthorized");
       router.refresh();

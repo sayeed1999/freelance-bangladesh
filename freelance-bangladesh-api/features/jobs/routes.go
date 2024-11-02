@@ -29,10 +29,7 @@ func RegisterJobRoutes(rg *gin.RouterGroup) *gin.RouterGroup {
 		jobs.GET(
 			"",
 			middlewares.PrivateCache(),
-			middlewares.Authorize(
-				string(enums.ROLE_ADMIN),
-				string(enums.ROLE_CLIENT),
-				string(enums.ROLE_TALENT)),
+			middlewares.Authorize(),
 			getjobs.GetJobsHandler(getJobsUseCase),
 		)
 

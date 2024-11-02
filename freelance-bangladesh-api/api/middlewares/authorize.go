@@ -9,12 +9,14 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
 	oidc "github.com/coreos/go-oidc"
 	"github.com/gin-gonic/gin"
 	"github.com/sayeed1999/freelance-bangladesh/config"
+	"github.com/sayeed1999/freelance-bangladesh/shared/enums"
 )
 
 type Res401Struct struct {
@@ -96,6 +98,15 @@ func Authorize(roles ...string) gin.HandlerFunc {
 
 		// Check user roles against required roles
 		userRoles := IDTokenClaims.RealmAccess.Roles
+
+		// LOGIC: if the user dont have any other application role,
+		// we provide him 'talent' scope.
+		if !slices.Contains(userRoles, string(enums.ROLE_ADMIN)) &&
+			!slices.Contains(userRoles, string(enums.ROLE_CLIENT)) {
+			userRoles = append(userRoles, string(enums.ROLE_TALENT))
+			IDTokenClaims.RealmAccess.Roles = userRoles
+		}
+
 		if !hasRequiredRole(userRoles, roles) {
 			// Authorization failed if no roles matched
 			authorizationFailed("user not allowed to access this API", c)
@@ -114,6 +125,11 @@ func hasRequiredRole(userRoles, requiredRoles []string) bool {
 	if len(requiredRoles) == 0 {
 		return true
 	}
+
+	/// User is a talent if:
+	/// - user is not an admin user
+	/// - user is not a client
+	/// - if user has no roles at all!
 
 	for _, role := range requiredRoles {
 		for _, userRole := range userRoles {
